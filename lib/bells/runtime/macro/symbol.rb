@@ -5,11 +5,18 @@ class Bells::Runtime::Macro::Symbol < Bells::Runtime::Macro
   attr_reader :symbol
 
   def initialize symbol
+    super
     @symbol = symbol
   end
   
   def init_env
-    self[var :to_s] = create_a Macro::Func do |_, *a| _.symbol.to_s end
+    @env[var :to_s] = create_a Macro::Func do |_, *a|
+       _.create_a Bells::Runtime::Macro::String, _.symbol.to_s
+     end
+  end
+  
+  def bells_eval *nodes
+    @context[self].bells_eval *nodes
   end
   
   def eql? other

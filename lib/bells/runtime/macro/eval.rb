@@ -8,7 +8,7 @@ class Bells::Runtime::Macro::Eval < Bells::Runtime::Macro
       when Bells::Syntax::Node::Symbol then create_a Macro::Symbol, node.symbol
       when Bells::Syntax::Node::String then create_a Macro::String, node.string
       when Bells::Syntax::Node::Macro
-        self[e.(node.node)].bells_eval(*node.args)
+        e.(node.node).bells_eval *node.args
       end
     end
     

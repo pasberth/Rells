@@ -16,6 +16,7 @@ class Bells::Runtime::Macro
   end
   
   def [] macro
+    @env ||= {}
     init_env
     def self.[] macro
       @env[macro] or @context && @context[macro]
