@@ -41,11 +41,13 @@ class Bells::Syntax::Lexer < PasParse::Lexer
         else
           expect "\n"
         end
+        origin_indent = @indent
         expect ' ' * @indent
         new_indent = many ' '
         @indent += new_indent.length + 1
         a = primary
         as = macro_args
+        @indent = origin_indent
         Token::Macro.new a, *as
       end
     end

@@ -42,4 +42,19 @@ describe Bells::Syntax::Lexer do
               Token::Symbol.new("g")
             ))
   end
+
+  example do
+    program = StringIO.new(<<-CODE)
+    puts "hello world"
+    puts "line 2"
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Token::Macro.new(
+            Token::Symbol.new("puts"),
+            Token::String.new("hello world"))
+    lexer.token.should == Token::Macro.new(
+            Token::Symbol.new("puts"),
+            Token::String.new("line 2"))
+  end
+
 end
