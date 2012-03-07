@@ -36,7 +36,7 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     end
     
     def macro
-      try do
+      try {
         if @indent < 0
           @indent = 0
         else
@@ -50,8 +50,14 @@ class Bells::Syntax::Lexer < PasParse::Lexer
         as = macro_args
         @indent = origin_indent
         Node::Macro.new a, *as
-      end
-    end
+      } or try {
+        expect "$"
+        many1 ' '
+        a = primary
+        as = macro_args
+        Node::Macro.new a, *as
+      }
+     end
     
     def macro_args
       many do
@@ -60,5 +66,3 @@ class Bells::Syntax::Lexer < PasParse::Lexer
       end
     end
 end
-
-require 'bells/syntax/node'

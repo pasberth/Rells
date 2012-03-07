@@ -1,8 +1,8 @@
 require 'spec_helper'
 
+include Bells::Syntax
+
 describe Bells::Syntax::Lexer do
-  
-  include Bells::Syntax
 
   example do
     program = StringIO.new "puts"
@@ -56,5 +56,19 @@ describe Bells::Syntax::Lexer do
             Node::Symbol.new(:puts),
             Node::String.new("line 2"))
   end
-
+  
+  example do
+    program = StringIO.new(<<-CODE)
+    define f $ -> a $ a
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new(:define),
+            Node::Symbol.new(:f),
+            Node::Macro.new(
+              Node::Symbol.new(:"->"),
+              Node::Symbol.new(:a),
+              Node::Macro.new(
+                  Node::Symbol.new(:a))))
+  end
 end

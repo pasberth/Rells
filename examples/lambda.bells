@@ -1,4 +1,4 @@
-define A
+define f
   -> a b c
     puts a b c
-A "hello" "bells" "world"
+f "hello" "bells" "world"
