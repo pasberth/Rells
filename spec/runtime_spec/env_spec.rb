@@ -12,7 +12,7 @@ describe Bells::Runtime::Env do
   end
   
   example do
-    sym = subject.create_a Bells::Runtime::Macro::String, :symbol
+    sym = subject.create_a Bells::Runtime::Macro::Symbol, :symbol
     sym[subject.var :to_s].bells_eval.string.should == "symbol"
   end
   
