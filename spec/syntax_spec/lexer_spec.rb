@@ -71,4 +71,27 @@ describe Bells::Syntax::Lexer do
               Node::Macro.new(
                   Node::Symbol.new(:a))))
   end
+  
+  example do
+    program = StringIO.new(<<-CODE)
+
+    CODE
+    lexer = described_class.new program
+    lexer.token.should be_nil
+  end
+  
+  example do
+    program = StringIO.new(<<-CODE)
+    puts "hello world"
+    
+    puts "line 2"
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new(:puts),
+            Node::String.new("hello world"))
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new(:puts),
+            Node::String.new("line 2"))
+  end
 end

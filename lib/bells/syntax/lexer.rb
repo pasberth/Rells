@@ -16,26 +16,32 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     primary
   end
 
+
   private
-    def primary
-      macro or symbol or string
+
+    def primary!
+      macro or blank_line or symbol or string or raise Unexpected
     end
     
-    def symbol
-      try do
-        s = many1(/[a-zA-Z\-\>\<]/)
-        Node::Symbol.new s.join.intern
-      end
+    %w[primary symbol string macro macro_args blank_line].each do |a|
+      class_eval(<<-CODE)
+        def #{a}
+          try { #{a}! }
+        end
+      CODE
     end
     
-    def string
-      try do
-        s = between('"', '"') { many(/(?!")./) }
-        Node::String.new s.join
-      end
+    def symbol!
+      s = many1(/[a-zA-Z\-\>\<]/)
+      Node::Symbol.new s.join.intern
     end
     
-    def macro
+    def string!
+      s = between('"', '"') { many(/(?!")./) }
+      Node::String.new s.join
+    end
+    
+    def macro!
       try {
         if @indent < 0
           @indent = 0
@@ -46,23 +52,31 @@ class Bells::Syntax::Lexer < PasParse::Lexer
         expect ' ' * @indent
         new_indent = many ' '
         @indent += new_indent.length + 1
-        a = primary
-        as = macro_args
+        a = primary!
+        as = macro_args!
         @indent = origin_indent
         Node::Macro.new a, *as
       } or try {
         expect "$"
         many1 ' '
-        a = primary
-        as = macro_args
+        a = primary!
+        as = macro_args!
         Node::Macro.new a, *as
-      }
+      } or raise Unexpected
      end
     
-    def macro_args
+    def macro_args!
       many do
         many ' '
         primary
       end
+    end
+    
+    def blank_line!
+      macro or try {
+        expect "\n"
+        many ' '
+        blank_line!
+      } or raise Unexpected
     end
 end

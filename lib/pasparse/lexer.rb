@@ -26,7 +26,7 @@ class PasParse::Lexer
   end
   
   def state_attrs
-    Hash[self.class.state_attrs.flat_map { |a| [a, ((v = send(a)).clone rescue v)] }]
+    Hash[*self.class.state_attrs.flat_map { |a| [a, ((v = send(a)).clone rescue v)] }]
   end
   
   def initialize input
