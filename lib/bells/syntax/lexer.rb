@@ -39,7 +39,7 @@ class Bells::Syntax::Lexer < PasParse::Lexer
         if @indent < 0
           @indent = 0
         else
-          expect '\n'
+          expect "\n"
         end
         expect ' ' * @indent
         new_indent = many ' '
@@ -51,11 +51,9 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     end
     
     def macro_args
-      try do
-        many do
-          many ' '
-          primary
-        end
+      many do
+        many ' '
+        primary
       end
     end
 end
