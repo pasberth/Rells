@@ -7,7 +7,7 @@ describe Bells::Syntax::Lexer do
   example do
     program = StringIO.new "puts"
     lexer = described_class.new program
-    lexer.send(:symbol).should == Node::Symbol.new("puts")
+    lexer.send(:symbol).should == Node::Symbol.new(:puts)
   end
 
   example do
@@ -22,7 +22,7 @@ describe Bells::Syntax::Lexer do
     CODE
     lexer = described_class.new program
     lexer.token.should == Node::Macro.new(
-            Node::Symbol.new("puts"),
+            Node::Symbol.new(:puts),
             Node::String.new("hello world"))
   end
 
@@ -33,13 +33,13 @@ describe Bells::Syntax::Lexer do
     CODE
     lexer = described_class.new program
     lexer.token.should == Node::Macro.new(
-            Node::Symbol.new("puts"),
+            Node::Symbol.new(:puts),
             Node::String.new("hello world"),
             Node::Macro.new(
-              Node::Symbol.new("array"),
-              Node::Symbol.new("e"),
-              Node::Symbol.new("f"),
-              Node::Symbol.new("g")
+              Node::Symbol.new(:array),
+              Node::Symbol.new(:e),
+              Node::Symbol.new(:f),
+              Node::Symbol.new(:g)
             ))
   end
 
@@ -50,10 +50,10 @@ describe Bells::Syntax::Lexer do
     CODE
     lexer = described_class.new program
     lexer.token.should == Node::Macro.new(
-            Node::Symbol.new("puts"),
+            Node::Symbol.new(:puts),
             Node::String.new("hello world"))
     lexer.token.should == Node::Macro.new(
-            Node::Symbol.new("puts"),
+            Node::Symbol.new(:puts),
             Node::String.new("line 2"))
   end
 

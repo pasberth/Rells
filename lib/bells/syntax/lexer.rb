@@ -24,14 +24,14 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     def symbol
       try do
         s = many1(/[a-zA-Z]/)
-        Node::Symbol.new s.join
+        Node::Symbol.new s.join.intern
       end
     end
     
     def string
       try do
         s = between('"', '"') { many(/(?!")./) }
-        Node::Symbol.new s.join
+        Node::String.new s.join
       end
     end
     

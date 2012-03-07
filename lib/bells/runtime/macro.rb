@@ -1,8 +1,10 @@
 require 'bells/runtime'
+require 'bells/runtime/macro_helper'
 
 class Bells::Runtime::Macro
 
   include Bells::Runtime
+  include Bells::Runtime::MacroHelper
   
   attr_accessor :context
   
@@ -10,8 +12,15 @@ class Bells::Runtime::Macro
     @env = {}
   end
   
+  def init_env
+  end
+  
   def [] macro
-    @env[macro] or @context[macro]
+    init_env
+    def self.[] macro
+      @env[macro] or @context && @context[macro]
+    end
+    self[macro]
   end
   
   def create_a macro_class, *args, &block

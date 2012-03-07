@@ -3,22 +3,17 @@ require 'bells/runtime/macro'
 
 class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
   
-  def initialize
-    super
-    init
-  end
-
-  def init
-    @env[create_a Macro::Symbol, "to_s"] = create_a Macro::Func do |*args|
-      args.inspect
+  def init_env
+    @env[var :to_s] = create_a Macro::Func do |_, *args|
+      _.inspect
     end
 
-    @env[create_a Macro::Symbol, "eval"] = create_a Macro::Func do |*args|
+    @env[var :eval] = create_a Macro::Func do |_, *args|
       args.last
     end
 
-    @env[create_a Macro::Symbol, "puts"] = create_a Macro::Func do |*args|
-      puts args.map(&:inspect)
+    @env[var :puts] = create_a Macro::Func do |_, *args|
+      puts args.map { |a| a[var :to_s].bells_eval }
     end
   end
 end

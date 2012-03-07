@@ -11,7 +11,7 @@ class Bells::Syntax::Parser
     end
     
     toplevel = Node::Macro.new(
-      Node::Symbol.new("eval"), 
+      Node::Symbol.new(:eval), 
       *([].tap do |a|
         while t = lexer.token
           a << t

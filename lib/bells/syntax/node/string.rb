@@ -2,14 +2,14 @@ require 'bells/syntax/node'
 
 class Bells::Syntax::Node::String
   
-  attr_reader :token
+  attr_reader :string
 
-  def initialize token
-    @token = token
+  def initialize string
+    @string = string
   end
   
   def == other
-    token == other.token
+    string == other.string
   rescue
     false
   end
