@@ -1,6 +1,6 @@
-require 'bells/syntax/token'
+require 'bells/syntax/node'
 
-class Bells::Syntax::Token::Symbol
+class Bells::Syntax::Node::Symbol
   
   attr_reader :token
 

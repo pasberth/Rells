@@ -7,13 +7,13 @@ describe Bells::Syntax::Lexer do
   example do
     program = StringIO.new "puts"
     lexer = described_class.new program
-    lexer.send(:symbol).should == Token::Symbol.new("puts")
+    lexer.send(:symbol).should == Node::Symbol.new("puts")
   end
 
   example do
     program = StringIO.new '"hello world"'
     lexer = described_class.new program
-    lexer.send(:string).should == Token::String.new('hello world')
+    lexer.send(:string).should == Node::String.new('hello world')
   end
 
   example do
@@ -21,9 +21,9 @@ describe Bells::Syntax::Lexer do
     puts "hello world"
     CODE
     lexer = described_class.new program
-    lexer.token.should == Token::Macro.new(
-            Token::Symbol.new("puts"),
-            Token::String.new("hello world"))
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new("puts"),
+            Node::String.new("hello world"))
   end
 
   example do
@@ -32,14 +32,14 @@ describe Bells::Syntax::Lexer do
         array e f g
     CODE
     lexer = described_class.new program
-    lexer.token.should == Token::Macro.new(
-            Token::Symbol.new("puts"),
-            Token::String.new("hello world"),
-            Token::Macro.new(
-              Token::Symbol.new("array"),
-              Token::Symbol.new("e"),
-              Token::Symbol.new("f"),
-              Token::Symbol.new("g")
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new("puts"),
+            Node::String.new("hello world"),
+            Node::Macro.new(
+              Node::Symbol.new("array"),
+              Node::Symbol.new("e"),
+              Node::Symbol.new("f"),
+              Node::Symbol.new("g")
             ))
   end
 
@@ -49,12 +49,12 @@ describe Bells::Syntax::Lexer do
     puts "line 2"
     CODE
     lexer = described_class.new program
-    lexer.token.should == Token::Macro.new(
-            Token::Symbol.new("puts"),
-            Token::String.new("hello world"))
-    lexer.token.should == Token::Macro.new(
-            Token::Symbol.new("puts"),
-            Token::String.new("line 2"))
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new("puts"),
+            Node::String.new("hello world"))
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new("puts"),
+            Node::String.new("line 2"))
   end
 
 end

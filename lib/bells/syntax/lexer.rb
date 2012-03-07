@@ -1,3 +1,4 @@
+require 'bells/syntax'
 require 'pasparse'
 
 class Bells::Syntax::Lexer < PasParse::Lexer
@@ -23,14 +24,14 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     def symbol
       try do
         s = many1(/[a-zA-Z]/)
-        Token::Symbol.new s.join
+        Node::Symbol.new s.join
       end
     end
     
     def string
       try do
         s = between('"', '"') { many(/(?!")./) }
-        Token::Symbol.new s.join
+        Node::Symbol.new s.join
       end
     end
     
@@ -48,7 +49,7 @@ class Bells::Syntax::Lexer < PasParse::Lexer
         a = primary
         as = macro_args
         @indent = origin_indent
-        Token::Macro.new a, *as
+        Node::Macro.new a, *as
       end
     end
     
@@ -60,4 +61,4 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     end
 end
 
-require 'bells/syntax/token'
+require 'bells/syntax/node'
