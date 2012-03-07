@@ -13,7 +13,25 @@ class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
     end
 
     @env[var :puts] = create_a Macro::Func, self do |_, *args|
-      puts args.map { |a| a[var :to_s].bells_eval.string }
+      puts args.map { |a| a.bells_eval[var :to_s].bells_eval.string }
+    end
+    
+    @env[var :define] = create_a Macro::PureMacro do |_, *nodes|
+      var = _.bells_eval nodes.shift
+      val = _.bells_eval nodes.shift
+      _[var] = val
+      val
+    end
+    
+    @env[var :"->"] = create_a Macro::PureMacro do |_, *nodes|
+      params = nodes.take_while { |a| a.is_a? Bells::Syntax::Node::Symbol }
+      stats = nodes.drop_while { |a| a.is_a? Bells::Syntax::Node::Symbol }
+      
+      _.create_a Macro::Func, _ do |_, *args|
+        e = _.create_a Macro::Eval
+        params.each { |a| e[e.create_a Macro::Symbol, a.symbol] = args.shift }
+        e.bells_eval *stats
+      end
     end
   end
 end

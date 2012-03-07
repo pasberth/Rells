@@ -1,0 +1,4 @@
+define A
+  -> a b c
+    puts a b c
+A "hello" "bells" "world"

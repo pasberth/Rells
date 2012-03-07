@@ -13,4 +13,8 @@ class Bells::Syntax::Node::Symbol
   rescue
     false
   end
+  
+  def to_s
+    symbol.inspect
+  end
 end

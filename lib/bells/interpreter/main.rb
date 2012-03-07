@@ -17,6 +17,7 @@ class Bells::Interpreter::Main
 
   def run
     node = @parser.parse options[:main]
+    puts node
     @global.bells_eval node
     true
   end

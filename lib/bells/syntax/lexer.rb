@@ -23,7 +23,7 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     
     def symbol
       try do
-        s = many1(/[a-zA-Z]/)
+        s = many1(/[a-zA-Z\-\>\<]/)
         Node::Symbol.new s.join.intern
       end
     end

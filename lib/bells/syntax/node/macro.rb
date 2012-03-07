@@ -15,4 +15,8 @@ class Bells::Syntax::Node::Macro
   rescue
     false
   end
+  
+  def to_s
+    "( #{node} #{args.join ' '} )"
+  end
 end

@@ -13,4 +13,8 @@ class Bells::Syntax::Node::String
   rescue
     false
   end
+  
+  def to_s
+    string.inspect
+  end
 end
