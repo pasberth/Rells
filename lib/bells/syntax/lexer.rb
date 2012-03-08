@@ -20,10 +20,10 @@ class Bells::Syntax::Lexer < PasParse::Lexer
   private
 
     def primary!
-      macro or blank_line or symbol or string or raise Unexpected
+      macro or blank_line or symbol or string or hyphenation or raise Unexpected
     end
     
-    %w[primary symbol string macro macro_args blank_line].each do |a|
+    %w[primary symbol string macro macro_args blank_line hyphenation].each do |a|
       class_eval(<<-CODE)
         def #{a}
           try { #{a}! }
@@ -31,12 +31,24 @@ class Bells::Syntax::Lexer < PasParse::Lexer
       CODE
     end
     
+    def hyphenation!
+      expect "\n"
+      many ' '
+      expect '--'
+      many ' '
+      primary!
+    end
+    
     def symbol!
+      # reserved words
+      unexpect '--'
+      unexpect '$'
       s = many1(/[a-zA-Z\-\>\<]/)
       Node::Symbol.new s.join.intern
     end
     
     def string!
+      raise Unexpected if touch!('--')
       s = between('"', '"') { many(/(?!")./) }
       Node::String.new s.join
     end
@@ -52,6 +64,7 @@ class Bells::Syntax::Lexer < PasParse::Lexer
         expect ' ' * @indent
         new_indent = many ' '
         @indent += new_indent.length + 1
+        raise Unexpected if touch!('--')
         a = primary!
         as = macro_args!
         @indent = origin_indent

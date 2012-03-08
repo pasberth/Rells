@@ -45,6 +45,20 @@ describe Bells::Syntax::Lexer do
 
   example do
     program = StringIO.new(<<-CODE)
+    puts "hello"
+     -- "bells"
+     -- "world"
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new(:puts),
+            Node::String.new("hello"),
+            Node::String.new("bells"),
+            Node::String.new("world"))
+  end
+
+  example do
+    program = StringIO.new(<<-CODE)
     puts "hello world"
     puts "line 2"
     CODE
