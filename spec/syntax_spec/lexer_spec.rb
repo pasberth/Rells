@@ -56,6 +56,70 @@ describe Bells::Syntax::Lexer do
             Node::String.new("bells"),
             Node::String.new("world"))
   end
+  
+  example do
+    program = StringIO.new(<<-CODE)
+    ----
+    This is comment
+    ----
+    puts "hello"
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new(:puts),
+            Node::String.new("hello"))
+  end
+
+  
+  example do
+    program = StringIO.new(<<-CODE)
+    puts "hello"
+    ----
+    This iss comment
+    ----
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new(:puts),
+            Node::String.new("hello"))
+  end
+
+  example do
+    program = StringIO.new(<<-CODE)
+    puts "hello" ---- This is one-line comment
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new(:puts),
+            Node::String.new("hello"))
+  end
+
+  example do
+    program = StringIO.new(<<-CODE)
+    puts "hello world" ---- This is one-line comment
+        array e f g
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new(:puts),
+            Node::String.new("hello world"),
+            Node::Macro.new(
+              Node::Symbol.new(:array),
+              Node::Symbol.new(:e),
+              Node::Symbol.new(:f),
+              Node::Symbol.new(:g)
+            ))
+  end
+
+  example do
+    program = StringIO.new(<<-CODE)
+    ----
+    This is comment
+    ----
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == nil
+  end
 
   example do
     program = StringIO.new(<<-CODE)

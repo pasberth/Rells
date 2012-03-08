@@ -1,6 +1,6 @@
 require 'bells/syntax/node'
 
-class Bells::Syntax::Node::Symbol
+class Bells::Syntax::Node::Symbol < Bells::Syntax::Node
   
   attr_reader :symbol
 

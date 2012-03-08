@@ -16,19 +16,56 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     primary
   end
 
-
   private
 
     def primary!
-      macro or blank_line or symbol or string or hyphenation or raise Unexpected
+      try do
+        comment
+        macro or blank_line or symbol or string or hyphenation or raise Unexpected
+      end or raise Unexpected
     end
     
-    %w[primary symbol string macro macro_args blank_line hyphenation].each do |a|
+    %w[primary symbol string macro macro_args blank_line hyphenation comment one_line_comment multi_line_comment].each do |a|
       class_eval(<<-CODE)
         def #{a}
           try { #{a}! }
         end
       CODE
+    end
+    
+    def comment!
+      multi_line_comment or one_line_comment or raise Unexpected
+    end
+    
+    def one_line_comment!
+      expect! "\n"
+      many ' '
+      mark = expect(/(?!\s)./)
+      3.times { expect(mark) }
+      many { expect! mark }.join
+      Node::Comment.new many(/./).join
+    end
+    
+    def multi_line_comment!
+      if @indent < 0
+        @indent = 0
+      else
+        expect! "\n"
+      end
+      many ' '
+      comment_frame  = ""
+      mark = expect(/(?!\s)./)
+      comment = ""
+      comment_frame << mark
+      3.times { comment_frame << expect(mark) }
+      comment_frame << many { expect! mark }.join
+      many ' '
+      expect "\n"
+      comment = many do
+        unexpect! comment_frame and expect!(/./m)
+      end.join
+      expect comment_frame
+      Node::Comment.new comment
     end
     
     def hyphenation!

@@ -1,6 +1,6 @@
 require 'bells/syntax/node'
 
-class Bells::Syntax::Node::String
+class Bells::Syntax::Node::String < Bells::Syntax::Node
   
   attr_reader :string
 
