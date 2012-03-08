@@ -11,9 +11,7 @@ class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
       self[var :to_s] = create_a Macro::String, "(nil)"
     end
 
-    @env[var :to_s] = create_a Macro::Func, self do |_, *args|
-      _.receiver.create_a Bells::Runtime::Macro::String, "(global)"
-    end
+    @env[var :to_s] = create_a Macro::String, "(global)"
 
     @env[var :eval] = create_a Macro::Func, self do |_, *args|
       args.last
