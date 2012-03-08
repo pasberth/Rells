@@ -1,0 +1,10 @@
+define f
+  -> a
+    -> b
+      -> c
+        puts a b c
+
+define g $ f "hello"
+define h $ g "bells"
+
+h "world"

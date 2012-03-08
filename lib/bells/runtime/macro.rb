@@ -27,7 +27,8 @@ class Bells::Runtime::Macro
                  @dynamic_context && @dynamic_context[key] )
         val.bind self
       else
-        fail
+        self[var :nil]
+        #fail
       end
     end
     self[key]
@@ -53,6 +54,7 @@ class Bells::Runtime::Macro
   end
   
   def bells_eval *nodes
+    self
   end
 end
 

@@ -11,13 +11,13 @@ class Bells::Runtime::Macro::Func < Bells::Runtime::Macro
   def bells_eval *args
     e = ->(node) do
       case node
-      when Bells::Syntax::Node::Symbol then (dynamic_context || receiver).create_a Macro::Symbol, node.symbol
-      when Bells::Syntax::Node::String then (dynamic_context || receiver).create_a Macro::String, node.string
+      when Bells::Syntax::Node::Symbol then (dynamic_context || receiver).create_a(Macro::Symbol, node.symbol).bells_eval
+      when Bells::Syntax::Node::String then (dynamic_context || receiver).create_a(Macro::String, node.string).bells_eval
       when Bells::Syntax::Node::Macro
         e.(node.node).bells_eval *node.args
       end
     end
     
-    @func.( @receiver, *args.map { |node| e.(node) } )
+    @func.( self, *args.map { |node| e.(node) } )
   end
 end

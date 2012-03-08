@@ -11,12 +11,12 @@ class Bells::Runtime::Macro::Symbol < Bells::Runtime::Macro
   
   def init_env
     @env[var :to_s] = create_a Macro::Func, self do |_, *a|
-       _.create_a Bells::Runtime::Macro::String, _.symbol.to_s
+       _.receiver.create_a Bells::Runtime::Macro::String, _.receiver.symbol.to_s
      end
   end
   
   def bells_eval *nodes
-    @static_context[self].bells_eval *nodes
+    @static_context[self]
   end
   
   def eql? other

@@ -10,7 +10,7 @@ class Bells::Runtime::Macro::String < Bells::Runtime::Macro
   end
   
   def init_env
-    @env[var :to_s] = create_a Macro::Func, self do |_, *a| _ end
+    @env[var :to_s] = create_a Macro::Func, self do |_, *a| _.receiver end
   end
 
   def bells_eval *nodes

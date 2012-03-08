@@ -3,14 +3,10 @@ require 'bells/runtime/macro'
 class Bells::Runtime::Macro::PureMacro < Bells::Runtime::Macro
   
   def initialize &native_function
-    if block_given?
-      @native_function = native_function
-    else
-      stats # TODO
-    end
+    @native_function = native_function
   end
   
   def bells_eval *nodes
-    @native_function.call @static_context, *nodes
+    @native_function.call self, *nodes
   end
 end

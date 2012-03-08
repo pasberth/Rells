@@ -18,7 +18,7 @@ describe Bells::Runtime::Env do
   
   example do
     func = subject.create_a Bells::Runtime::Macro::Func, subject do |_, *a|
-      _.should == subject
+      _.receiver.should == subject
       "return value"
     end
     func.bells_eval.should == "return value"
