@@ -1,0 +1,5 @@
+define a $ macro funcall
+    define x "hello"
+    funcall
+
+a $ puts x

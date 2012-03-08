@@ -8,6 +8,16 @@ class Bells::Syntax::Node::Symbol
     @symbol = symbol
   end
   
+  def eql? other
+    @symbol.eql? other.symbol
+  rescue
+    false
+  end
+  
+  def hash
+    @symbol.hash
+  end
+
   def == other
     symbol == other.symbol
   rescue

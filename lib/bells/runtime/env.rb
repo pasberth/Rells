@@ -24,16 +24,37 @@ class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
       _.receiver[_.receiver.var :nil]
     end
     
+    @env[var :macro] = create_a Macro::PureMacro do |_, *nodes|
+      params = nodes.take_while { |a| a.is_a? Bells::Syntax::Node::Symbol }
+      stats = nodes.drop_while { |a| a.is_a? Bells::Syntax::Node::Symbol }
+      _.dynamic_context.create_a Macro::PureMacro do |_, *args|
+        args = Hash[*params.flat_map { |a| [a, args.shift || _.dynamic_context[var :nil]] }]
+        expand = ->(node) do
+          case node
+          when Bells::Syntax::Node::Symbol
+            if params.include? node
+              args[node]
+            else
+              node
+            end
+          when Bells::Syntax::Node::Macro
+            Bells::Syntax::Node::Macro.new expand.(node.node), *node.args.map { |a| expand.(a) }
+          else
+            node
+          end
+        end
+        _.dynamic_context.bells_eval *stats.map { |node| expand.(node) }
+      end
+    end
+    
     @env[var :define] = create_a Macro::PureMacro do |_, *nodes|
-      var = _.static_context.create_a Macro::Symbol, nodes.shift.symbol
-      val = _.static_context.bells_eval nodes.shift
-      _.static_context[var] = val
+      var = _.dynamic_context.create_a Macro::Symbol, nodes.shift.symbol
+      val = _.dynamic_context.bells_eval nodes.shift
+      _.dynamic_context[var] = val
       val
     end
     
     @env[var :"->"] = create_a Macro::PureMacro do |_, *nodes|
-      #puts _
-      #puts nodes
       params = nodes.take_while { |a| a.is_a? Bells::Syntax::Node::Symbol }
       stats = nodes.drop_while { |a| a.is_a? Bells::Syntax::Node::Symbol }
       
