@@ -137,6 +137,20 @@ describe Bells::Syntax::Lexer do
   
   example do
     program = StringIO.new(<<-CODE)
+    puts "hello world" ---- comment 1
+    puts "line 2" ---- comment 2
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new(:puts),
+            Node::String.new("hello world"))
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new(:puts),
+            Node::String.new("line 2"))
+  end
+  
+  example do
+    program = StringIO.new(<<-CODE)
     define f $ -> a $ a
     CODE
     lexer = described_class.new program
