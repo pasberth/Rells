@@ -8,16 +8,29 @@ class Bells::Runtime::Macro::Object < Bells::Runtime::Macro
 
   def bells_eval *nodes
     return self if nodes.empty?
-    method = nodes.shift
+
     e = ->(node) do
       case node
       when Bells::Syntax::Node::Symbol then create_a(Macro::Symbol, node.symbol).bells_eval
       when Bells::Syntax::Node::String then create_a(Macro::String, node.string).bells_eval
       when Bells::Syntax::Node::Integer then create_a(Macro::Integer, node.integer).bells_eval
-      when Bells::Syntax::Node::Macro then e.(node.node).bells_eval *node.args
       end
     end
-    method = e.(method)
-    method.bells_eval *nodes
+
+    f = ->(node) do
+      case node
+      when Bells::Syntax::Node::Macro
+        ret = e.(node.node).bells_eval *node.args
+        if nodes.empty?
+          ret
+        else
+          f.(nodes.shift)
+        end
+      else
+        e.(node).bells_eval *nodes
+      end
+    end
+    
+    f.(nodes.shift)
   end
 end
