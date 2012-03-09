@@ -29,7 +29,9 @@ class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
         args = Hash[*params.flat_map do |a|
           case a.symbol[0]
           when '*'
-            [a, args]
+            ret = [a, args.clone]
+            args.clear
+            ret
           else
             [a, args.shift || _.dynamic_context[var :nil]]
           end
