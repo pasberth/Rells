@@ -5,17 +5,11 @@ class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
   
   def init_env
     @env[var :global] = self
-    
-    @env[var :nil] = create_a Macro
-    @env[var :nil].instance_eval do
-      self[var :to_s] = create_a Macro::String, "(nil)"
-      self[var :nil?] = self
-      def condition
-        false
-      end
-    end
-
     @env[var :to_s] = create_a Macro::String, "(global)"
+    
+    @env[var :nil] = create_a Macro::Nil
+    @env[var :true] = create_a Macro::True
+    @env[var :false] = create_a Macro::False
 
     @env[var :eval] = create_a Macro::Func, self do |_, *args|
       args.last
@@ -77,7 +71,7 @@ class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
       end
     end
     
-    @env[var :nil?] = create_a Macro::Integer, 1
+    @env[var :nil?] = @env[var :true]
     
     @env[var :define] = create_a Macro::PureMacro do |_, *nodes|
       var = _.dynamic_context.create_a Macro::Symbol, nodes.shift.symbol
