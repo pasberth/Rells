@@ -1,0 +1,8 @@
+define def
+  macro name *rest
+    define name $ -> *rest
+
+def f a b c
+  puts a b c
+
+f "hello" "bells" "world"

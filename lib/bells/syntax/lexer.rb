@@ -80,7 +80,7 @@ class Bells::Syntax::Lexer < PasParse::Lexer
       # reserved words
       unexpect '--'
       unexpect '$'
-      s = many1(/[a-zA-Z\-\>\<]/)
+      s = many1(/[a-zA-Z\-\>\<\*]/)
       Node::Symbol.new s.join.intern
     end
     
