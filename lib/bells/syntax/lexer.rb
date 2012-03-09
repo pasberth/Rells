@@ -21,11 +21,11 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     def primary!
       try do
         comment
-        macro or blank_line or symbol or string or hyphenation or raise Unexpected
+        macro or blank_line or integer or symbol or string or hyphenation or raise Unexpected
       end or raise Unexpected
     end
     
-    %w[primary symbol string macro macro_args blank_line hyphenation comment one_line_comment multi_line_comment].each do |a|
+    %w[primary symbol string macro macro_args blank_line hyphenation comment one_line_comment multi_line_comment integer].each do |a|
       class_eval(<<-CODE)
         def #{a}
           try { #{a}! }
@@ -76,11 +76,15 @@ class Bells::Syntax::Lexer < PasParse::Lexer
       primary!
     end
     
+    def integer!
+      Node::Integer.new many1(/\d/).join.to_i
+    end
+    
     def symbol!
       # reserved words
       unexpect '--'
       unexpect '$'
-      s = many1(/[a-zA-Z\-\>\<\*]/)
+      s = many1(/[\w\-\>\<\*]/)
       Node::Symbol.new s.join.intern
     end
     

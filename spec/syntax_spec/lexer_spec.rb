@@ -17,6 +17,18 @@ describe Bells::Syntax::Lexer do
   end
 
   example do
+    program = StringIO.new 'hello_world'
+    lexer = described_class.new program
+    lexer.send(:symbol).should == Node::Symbol.new(:hello_world)
+  end
+  
+  example do
+    program = StringIO.new '42'
+    lexer = described_class.new program
+    lexer.send(:integer).should == Node::Integer.new(42)
+  end
+
+  example do
     program = StringIO.new(<<-CODE)
     puts "hello world"
     CODE

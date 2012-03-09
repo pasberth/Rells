@@ -1,0 +1,6 @@
+define a $ object
+
+a define method $ ->
+  puts "hello world"
+
+a method

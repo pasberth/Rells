@@ -58,8 +58,11 @@ class Bells::Runtime::Macro
   end
 end
 
+require 'bells/runtime/macro/object'
 require 'bells/runtime/macro/pure_macro'
+require 'bells/runtime/macro/eval'
+
 require 'bells/runtime/macro/symbol'
 require 'bells/runtime/macro/string'
+require 'bells/runtime/macro/integer'
 require 'bells/runtime/macro/func'
-require 'bells/runtime/macro/eval'

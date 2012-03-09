@@ -72,5 +72,9 @@ class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
         e.bells_eval *stats
       end
     end
+    
+    @env[var :object] = create_a Macro::PureMacro do |_, *nodes|
+      _.dynamic_context.create_a Macro::Object
+    end
   end
 end

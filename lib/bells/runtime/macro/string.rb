@@ -1,6 +1,6 @@
 require 'bells/runtime/macro'
 
-class Bells::Runtime::Macro::String < Bells::Runtime::Macro
+class Bells::Runtime::Macro::String < Bells::Runtime::Macro::Object
   
   attr_reader :string
 
@@ -13,10 +13,6 @@ class Bells::Runtime::Macro::String < Bells::Runtime::Macro
     @env[var :to_s] = create_a Macro::Func, self do |_, *a| _.receiver end
   end
 
-  def bells_eval *nodes
-    self
-  end
-  
   def eql? other
     @string.eql? other.string
   rescue
