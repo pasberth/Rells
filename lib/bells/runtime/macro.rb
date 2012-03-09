@@ -53,6 +53,10 @@ class Bells::Runtime::Macro
     macro
   end
   
+  def bells_require path
+    self[var :require].bells_eval(Bells::Syntax::Node::String.new path)
+  end
+  
   def bells_eval *nodes
     self
   end
@@ -66,3 +70,4 @@ require 'bells/runtime/macro/symbol'
 require 'bells/runtime/macro/string'
 require 'bells/runtime/macro/integer'
 require 'bells/runtime/macro/func'
+require 'bells/runtime/macro/array'

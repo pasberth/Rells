@@ -16,6 +16,24 @@ class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
     @env[var :eval] = create_a Macro::Func, self do |_, *args|
       args.last
     end
+    
+    @env[var :"$LOAD_PATH"] = create_a Macro::Array, create_a(Macro::String, File.dirname(__FILE__) + '/../../../pure')
+    
+    @env[var :require] = create_a Macro::Func, self do |_, *args|
+      fname = args.shift
+      @env[var :"$LOAD_PATH"].array.each do |path|
+        if File.exist? "#{path.string + '/' + fname.string}.bells"
+          fname = "#{path.string + '/' + fname.string}.bells"
+        elsif File.exist? "#{path.string + '/' +fname.string}"
+          fname = "#{path.string + '/' +fname.string}"
+        else
+          next
+        end
+        io = open fname
+        toplevel = Bells::Syntax::Parser.new.parse io
+        _.dynamic_context.bells_eval toplevel
+      end
+    end
 
     @env[var :puts] = create_a Macro::Func, self do |_, *args|
       puts args.map { |a| a[var :to_s].bells_eval.string }

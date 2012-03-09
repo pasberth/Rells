@@ -1,0 +1,11 @@
+class Test
+
+  def initialize
+    puts "instance created"
+
+  def hello msg
+    puts msg
+
+define test $ Test new
+
+test hello "hello world"

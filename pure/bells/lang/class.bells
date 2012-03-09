@@ -1,0 +1,9 @@
+define class $ macro ClassName *defination
+  
+  define ClassName $ object
+
+  ClassName def new
+    define instance $ object
+    instance eval *defination
+    instance initialize
+    instance

@@ -16,6 +16,7 @@ class Bells::Interpreter::Main
   end
 
   def run
+    @global.bells_require 'bells/lang'
     node = @parser.parse options[:main]
     puts node
     @global.bells_eval node

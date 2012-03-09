@@ -1,0 +1,4 @@
+def f a b c
+  puts a b c
+
+f "hello" "bells" "world"

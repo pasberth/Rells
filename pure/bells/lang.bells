@@ -1,0 +1,2 @@
+require "bells/lang/def"
+require "bells/lang/class"

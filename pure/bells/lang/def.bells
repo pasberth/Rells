@@ -1,0 +1,3 @@
+define def
+  macro name *rest
+    define name $ -> *rest
