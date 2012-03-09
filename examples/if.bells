@@ -1,0 +1,10 @@
+if nil           .... condition
+  puts "true!"   .... then
+  puts "false!"  .... else
+
+if nil      .... condition
+  puts "1"  .... then
+  nil       .... else if condition
+  puts "2"  .... then
+  1         .... else if condition
+  puts "3"  .... then

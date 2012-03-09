@@ -40,6 +40,10 @@ class Bells::Runtime::Macro
     val
   end
   
+  def condition
+    true
+  end
+  
   def bind macro
     clone.tap do |a|
       a.dynamic_context = macro

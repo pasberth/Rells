@@ -9,6 +9,10 @@ class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
     @env[var :nil] = create_a Macro
     @env[var :nil].instance_eval do
       self[var :to_s] = create_a Macro::String, "(nil)"
+      self[var :nil?] = self
+      def condition
+        false
+      end
     end
 
     @env[var :to_s] = create_a Macro::String, "(global)"
@@ -73,6 +77,8 @@ class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
       end
     end
     
+    @env[var :nil?] = create_a Macro::Integer, 1
+    
     @env[var :define] = create_a Macro::PureMacro do |_, *nodes|
       var = _.dynamic_context.create_a Macro::Symbol, nodes.shift.symbol
       val = _.dynamic_context.bells_eval nodes.shift
@@ -93,6 +99,17 @@ class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
     
     @env[var :object] = create_a Macro::PureMacro do |_, *nodes|
       _.dynamic_context.create_a Macro::Object
+    end
+    
+    @env[var :if] = create_a Macro::PureMacro do |_, *nodes|
+      while cond = nodes.shift
+        ret = _.dynamic_context.bells_eval(cond)
+        if _then = nodes.shift and ret[var :nil?].bells_eval.condition
+          ret = _.dynamic_context.bells_eval _then
+          break
+        end
+      end
+      ret
     end
   end
 end
