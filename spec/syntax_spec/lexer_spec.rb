@@ -175,6 +175,68 @@ describe Bells::Syntax::Lexer do
               Node::Macro.new(
                   Node::Symbol.new(:a))))
   end
+
+  example do
+    program = StringIO.new(<<-CODE)
+    define f
+        $ -> a $ a
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new(:define),
+            Node::Symbol.new(:f),
+            Node::Macro.new(
+              Node::Symbol.new(:"->"),
+              Node::Symbol.new(:a),
+              Node::Macro.new(
+                  Node::Symbol.new(:a))))
+  end
+
+  example do
+    program = StringIO.new(<<-CODE)
+    define n $ 1 * 2 . + 3
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Node::Macro.new(
+            Node::Symbol.new(:define),
+            Node::Symbol.new(:n),
+            Node::Macro.new(
+              Node::Macro.new(
+                Node::Integer.new(1),
+                Node::Symbol.new(:*),
+                Node::Integer.new(2)),
+              Node::Symbol.new(:+),
+              Node::Integer.new(3)))
+  end
+
+  example do
+    program = StringIO.new(<<-CODE)
+    1 * 2 . + 3
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Node::Macro.new(
+            Node::Macro.new(
+              Node::Integer.new(1),
+              Node::Symbol.new(:*),
+              Node::Integer.new(2)),
+            Node::Symbol.new(:+),
+            Node::Integer.new(3))
+  end
+  
+  example do
+    program = StringIO.new(<<-CODE)
+    1 * 2
+        . + 3
+    CODE
+    lexer = described_class.new program
+    lexer.token.should == Node::Macro.new(
+            Node::Macro.new(
+              Node::Integer.new(1),
+              Node::Symbol.new(:*),
+              Node::Integer.new(2)),
+            Node::Symbol.new(:+),
+            Node::Integer.new(3))
+  end
   
   example do
     program = StringIO.new(<<-CODE)

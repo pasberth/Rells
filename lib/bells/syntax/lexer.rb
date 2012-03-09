@@ -84,7 +84,7 @@ class Bells::Syntax::Lexer < PasParse::Lexer
       # reserved words
       unexpect '--'
       unexpect '$'
-      s = many1(/[\w\-\>\<\*]/)
+      s = many1(/[\w\+\/\-\>\<\*]/)
       Node::Symbol.new s.join.intern
     end
     
@@ -96,6 +96,31 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     
     def macro!
       try {
+        many {
+          try {
+            expect "\n"
+            many ' '
+          }
+        }
+        expect "$"
+        many1 ' '
+        a = primary!
+        as = macro_args!
+        try {
+          many {
+            try {
+              expect "\n"
+              many ' '
+            }
+          }
+          comment
+          expect '.'
+          as2 = macro_args!
+          Node::Macro.new Node::Macro.new(a, *as), *as2
+        } or (
+          Node::Macro.new a, *as
+        )
+      } or try {
         if @indent < 0
           @indent = 0
         else
@@ -105,17 +130,25 @@ class Bells::Syntax::Lexer < PasParse::Lexer
         expect ' ' * @indent
         new_indent = many ' '
         @indent += new_indent.length + 1
-        raise Unexpected if touch!('--')
+        unexpect '--'
         a = primary!
         as = macro_args!
-        @indent = origin_indent
-        Node::Macro.new a, *as
-      } or try {
-        expect "$"
-        many1 ' '
-        a = primary!
-        as = macro_args!
-        Node::Macro.new a, *as
+        try {
+          many {
+            try {
+              expect "\n"
+              many ' '
+            }
+          }
+          comment
+          expect '.'
+          as2 = macro_args!
+          @indent = origin_indent
+          Node::Macro.new Node::Macro.new(a, *as), *as2
+        } or (
+          @indent = origin_indent
+          Node::Macro.new a, *as
+        )
       } or raise Unexpected
      end
     

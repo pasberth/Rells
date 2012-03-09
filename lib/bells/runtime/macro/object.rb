@@ -16,7 +16,7 @@ class Bells::Runtime::Macro::Object < Bells::Runtime::Macro
       when Bells::Syntax::Node::Integer then create_a(Macro::Integer, node.integer).bells_eval
       end
     end
-
+    
     f = ->(node) do
       case node
       when Bells::Syntax::Node::Macro
@@ -24,7 +24,7 @@ class Bells::Runtime::Macro::Object < Bells::Runtime::Macro
         if nodes.empty?
           ret
         else
-          f.(nodes.shift)
+          ret.bells_eval *nodes
         end
       else
         e.(node).bells_eval *nodes
