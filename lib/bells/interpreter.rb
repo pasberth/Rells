@@ -1,3 +1,4 @@
+require 'bells/core_ext'
 require 'bells/syntax'
 require 'bells/runtime'
 

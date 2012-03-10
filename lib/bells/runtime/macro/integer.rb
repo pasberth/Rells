@@ -29,6 +29,14 @@ class Bells::Runtime::Macro::Integer < Bells::Runtime::Macro::Object
       dynamic_context.create_a Macro::Integer, a.inject(i) { |r, o| r - o.receiver.integer }
     end
 
+    @env[var :==] = create_a Macro::Func, self do |_, *a|
+      if _.receiver.integer == a[0].receiver.integer
+        self[var :true]
+      else
+        self[var :false]
+      end
+    end
+
     @env[var :/] = create_a Macro::Func, self do |_, *a|
       i  = _.receiver.integer
       dynamic_context.create_a Macro::Integer, a.inject(i) { |r, o| r / o.receiver.integer }
@@ -48,6 +56,11 @@ class Bells::Runtime::Macro::Integer < Bells::Runtime::Macro::Object
       else
         self[var :false]
       end
+    end
+    
+    @env[var :%] = create_a Macro::Func, self do |_, *a|
+      i  = _.receiver.integer
+      dynamic_context.create_a Macro::Integer, a.inject(i) { |r, o| r % o.receiver.integer }
     end
 
     @env[var :times] = create_a Macro::Func, self do |_, *a|

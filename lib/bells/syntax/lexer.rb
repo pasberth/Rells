@@ -21,7 +21,9 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     def primary!
       try do
         comment
-        macro or blank_line or integer or symbol or string or hyphenation or raise Unexpected
+        ret = macro || blank_line || integer || symbol || string || hyphenation or raise Unexpected
+        comment
+        ret
       end or raise Unexpected
     end
     
@@ -84,7 +86,7 @@ class Bells::Syntax::Lexer < PasParse::Lexer
       # reserved words
       unexpect '--'
       unexpect '$'
-      s = many1(/[\w\+\/\-\>\<\*]/)
+      s = many1(/[\w\+\/\=\%\-\>\<\*]/)
       Node::Symbol.new s.join.intern
     end
     

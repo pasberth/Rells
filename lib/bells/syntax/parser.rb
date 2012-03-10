@@ -5,9 +5,11 @@ class Bells::Syntax::Parser
   
   def parse input
     if input.respond_to? :to_io
-      lexer = Lexer.new input.to_io
+      input = input.to_io
+      lexer = Lexer.new input
     elsif input.respond_to? :to_str
-      lexer = Lexer.new StringIO.new input.to_str
+      input = StringIO.new input.to_str
+      lexer = Lexer.new input
     end
     
     toplevel = Node::Macro.new(
@@ -15,6 +17,9 @@ class Bells::Syntax::Parser
       *([].tap do |a|
         while t = lexer.token
           a << t
+        end
+        if (rest = input.read) !~ /\A[ \n]*\z/
+          raise Bells::Syntax::SyntaxError, "Unexpected #{rest[0].inspect} in #{rest.each_line.first.inspect}."
         end
       end))
     toplevel

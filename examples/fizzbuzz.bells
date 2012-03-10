@@ -1,0 +1,9 @@
+100 times $ -> n
+  if
+     n % 15 . == 0
+     puts "FizzBuzz"
+     n % 3 . == 0
+     puts "Fizz"
+     n % 5 . == 0
+     puts "Buzz"
+     puts n
