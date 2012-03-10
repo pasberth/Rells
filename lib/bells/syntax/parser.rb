@@ -10,6 +10,8 @@ class Bells::Syntax::Parser
     elsif input.respond_to? :to_str
       input = StringIO.new input.to_str
       lexer = Lexer.new input
+    else
+      lexer = Lexer.new input
     end
     
     toplevel = Node::Macro.new(

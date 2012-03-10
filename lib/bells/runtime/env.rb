@@ -95,6 +95,10 @@ class Bells::Runtime::Env < Bells::Runtime::Macro::Eval
       _.dynamic_context.create_a Macro::Object
     end
     
+    @env[var :array] = create_a Macro::Func, self do |_, *elems|
+      _.dynamic_context.create_a Macro::Array, *elems
+    end
+    
     @env[var :if] = create_a Macro::PureMacro do |_, *nodes|
       cond, stats = nodes.split_in_while { |a| not a.is_a? Bells::Syntax::Node::Macro }
       unless cond.empty?

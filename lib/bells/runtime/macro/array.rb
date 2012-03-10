@@ -11,12 +11,12 @@ class Bells::Runtime::Macro::Array < Bells::Runtime::Macro::Object
   
   def init_env
     @env[var :to_s] = create_a Macro::Func, self do |_, *a|
-      _.receiver.create_a Macro::String, _.receiver.map { |b| b[var :to_s].bells_eval.string }.join(', ')
+      _.receiver.create_a Macro::String, _.receiver.array.map { |b| b[var :to_s].bells_eval.string }.join(', ')
     end
   end
 
   def eql? other
-    @arrat.eql? other.array
+    @array.eql? other.array
   rescue
     false
   end
@@ -26,7 +26,7 @@ class Bells::Runtime::Macro::Array < Bells::Runtime::Macro::Object
   end
   
   def == other
-    array == other.array
+    @array == other.array
   rescue
     false
   end

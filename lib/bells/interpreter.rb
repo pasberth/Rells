@@ -17,4 +17,6 @@ module Bells
   end
 end
 
+require 'bells/interpreter/syntax'
+require 'bells/interpreter/runtime'
 require 'bells/interpreter/main'
