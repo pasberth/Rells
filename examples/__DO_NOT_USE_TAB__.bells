@@ -1,1 +1,1 @@
-	---- This is a tab
+	---- This is a tab, and that should raise the SyntaxError even every time.
