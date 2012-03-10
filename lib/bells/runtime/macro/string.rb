@@ -1,31 +1,15 @@
 require 'bells/runtime/macro'
+require 'bells/runtime/macro/object'
 
-class Bells::Runtime::Macro::String < Bells::Runtime::Macro::Object
+class Bells::Runtime::Macro::String < String
   
-  attr_reader :string
-
-  def initialize string
-    super
-    @string = string
+  include Bells::Runtime::Macro::Objectable
+  
+  def to_rb
+    self
   end
   
-  def init_env
-    @env[var :to_s] = create_a Macro::Func, self do |_, *a| _.receiver end
-  end
-
-  def eql? other
-    @string.eql? other.string
-  rescue
-    false
-  end
-  
-  def hash
-    @string.hash
-  end
-  
-  def == other
-    string == other.string
-  rescue
-    false
+  def bells_init_env env
+    env[:to_s] = self
   end
 end

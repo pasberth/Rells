@@ -7,7 +7,7 @@ require 'stringio'
 
 buf = StringIO.new
 lex = Bells::Syntax::Lexer.new buf
-env = Bells::Runtime::Env.new
+env = Bells::Runtime::Global.new
 env.bells_require 'bells/lang'
 beg = 0
 while (line = Readline.readline 'bells> ')
@@ -16,7 +16,8 @@ while (line = Readline.readline 'bells> ')
   buf.seek beg
   while node = lex.token
     result = env.bells_eval node
-    puts '# => ' + result[env.var :to_s].bells_eval.string
+    p result
+    puts "# => #{result.bells_env[:to_s].bells_eval}"
   end
   beg = buf.pos
 end

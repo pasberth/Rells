@@ -1,14 +1,14 @@
 require 'bells/runtime/macro'
+require 'bells/runtime/macro/object'
 
 class Bells::Runtime::Macro::Nil < Bells::Runtime::Macro::Object
 
-  def init_env
-    super
-    self[var :to_s] = create_a Macro::String, "(nil)"
-    self[var :nil?] = self
+  def bells_init_env env
+    env[:to_s] = bells_value "(nil)"
+    env[:nil?] = self
   end
 
-  def condition
+  def bells_condition
     false
   end
 

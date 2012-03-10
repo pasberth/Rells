@@ -2,7 +2,7 @@ require 'bells/interpreter'
 
 module Bells::Runtime
   
-  class Macro
+  module Macro
     
     def bells_eval_str string
       bells_eval_io(StringIO.new(string))

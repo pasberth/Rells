@@ -9,7 +9,7 @@ class Bells::Interpreter::Main
   def initialize options={}
     @options = {
       parser: Parser.new,
-      global: Env.new
+      global: Global.new
     }.merge(options).each do |att, val|
       instance_variable_set :"@#{att}", val
     end

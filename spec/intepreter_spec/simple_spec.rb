@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'bells/interpreter'
 
 describe do
-  subject { Bells::Runtime::Env.new }
+  subject { Bells::Runtime::Global.new }
   
   example do
-    subject.bells_eval_str(<<-CODE).should == Bells::Runtime::Macro::String.new("a")
+    subject.bells_eval_str(<<-CODE).should == subject.bells_value("a")
       ----
       This should ignore
       ----
@@ -14,7 +14,7 @@ describe do
   end
 
   example do
-    ret = subject.bells_eval_str(<<-CODE).should == Bells::Runtime::Macro::Array.new(*(%w[hello bells world].map { |s| Bells::Runtime::Macro::String.new(s) }))
+    ret = subject.bells_eval_str(<<-CODE).should == subject.bells_value(%w[hello bells world])
       define f
         -> a
           -> b
@@ -33,7 +33,7 @@ describe do
           a
     CODE
 
-    subject.bells_eval_str('f "a"').should == Bells::Runtime::Macro::String.new("a")
+    subject.bells_eval_str('f "a"').should == subject.bells_value("a")
   end
 
   example do
@@ -41,6 +41,6 @@ describe do
       define f $ -> a $ a
     CODE
 
-    subject.bells_eval_str('f "a"').should == Bells::Runtime::Macro::String.new("a")
+    subject.bells_eval_str('f "a"').should == subject.bells_value("a")
   end
 end

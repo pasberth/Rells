@@ -1,6 +1,7 @@
 require 'bells/runtime/macro'
 
-class Bells::Runtime::Macro::PureMacro < Bells::Runtime::Macro
+class Bells::Runtime::Macro::PureMacro
+  include  Bells::Runtime::Macro
   
   def initialize &native_function
     @native_function = native_function
