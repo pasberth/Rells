@@ -21,6 +21,6 @@ class Bells::Runtime::Global < Bells::Runtime::Macro::Eval
 
     env[:global] = self
     env[:to_s] = bells_value "(global)"
-    env[:nil?] = env[:true]
+    env[:nil?] = env[:false]
   end
 end

@@ -14,7 +14,7 @@ module Bells::Runtime::Global::SyntaxMacros
       end
       begin
         ret = _.bells_dynamic_eval(cond)
-        if _then = stats.shift and ret.bells_env[:nil?].bells_eval.bells_condition
+        if _then = stats.shift and !ret.bells_env[:nil?].bells_eval.bells_condition
           ret = _.bells_dynamic_eval _then
           break
         end

@@ -1,0 +1,3 @@
+define namespace $ macro NAME *content
+  define NAME $ object
+  NAME eval *content

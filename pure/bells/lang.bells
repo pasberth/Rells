@@ -1,3 +1,4 @@
 require "bells/lang/while"
 require "bells/lang/def"
 require "bells/lang/class"
+require "bells/lang/namespace"

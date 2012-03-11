@@ -1,0 +1,9 @@
+namespace MY
+  define nil $ object
+  nil define to_s "(MY.nil)"
+  nil define nil? true
+
+puts $ MY . nil
+if MY nil
+  puts "true!"
+  puts "false!"

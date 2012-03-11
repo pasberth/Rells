@@ -5,7 +5,7 @@ class Bells::Runtime::Macro::Nil < Bells::Runtime::Macro::Object
 
   def bells_init_env env
     env[:to_s] = bells_value "(nil)"
-    env[:nil?] = self
+    env[:nil?] = env[:true]
   end
 
   def bells_condition
