@@ -5,23 +5,33 @@
     map)
   "Keymap used in Bells mode.")
 
-(defconst bells-symbol-re "[^\\\s]+")
+(defconst bells-symbol-re "[^\\\s\\\n]+")
 
 (defconst bells-font-lock-keywords
   (list
      ;; functions
      (cons (concat "^ *def +\\(" bells-symbol-re "\\)")
        '(1 font-lock-function-name-face))
+     ;; Type
+     (cons (concat "^ *class +\\(" bells-symbol-re "\\)")
+       '(1 font-lock-type-face))
+     ;; Type
+     (cons (concat "^ *namespace +\\(" bells-symbol-re "\\)")
+        '(1 font-lock-reference-face))
      ;; keywords
      (cons (concat
-       " *\\("
+       " +\\("
+       (regexp-opt '("$" "." "--")
+         t)
+        "\\) +")
+      2)
+     ;; keywords
+     (cons (concat
+       "\\(?:^\\|[\\$\\. ]\\) *\\("
        (regexp-opt
          '( "require"
             "array"
             "->"
-            "$"
-            "."
-            "--"
             "macro"
             "define"
             "def"
@@ -31,8 +41,11 @@
             "if"
             "while")
          t)
-        "\\) +")
+        "\\)\\(:?[\\\n ]\\) *")
       2)
+     ;; singleton-objects
+     '("\\<\\(nil\\|global\\|true\\|false\\)\\>"
+       1 font-lock-variable-name-face)
      ;; funcall
      (cons (concat " *[\\$\\.] +\\(" bells-symbol-re "\\)")
        '(1 font-lock-function-name-face))
