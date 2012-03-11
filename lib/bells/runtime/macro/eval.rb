@@ -14,6 +14,6 @@ class Bells::Runtime::Macro::Eval
       end
     end
     
-    nodes.inject(nil) { |result, node| e.(node) }
+    nodes.inject(bells_env[:nil]) { |result, node| e.(node) }
   end
 end

@@ -23,6 +23,7 @@ class Bells::Runtime::Macro::Symbol
   end
 
   def bells_init_env env
+    super
     env[:to_s] = env.create_a Macro::Func, self do |_, f, *a|
       _.bells_value _.to_s
      end

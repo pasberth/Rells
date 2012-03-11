@@ -10,6 +10,8 @@ class Bells::Runtime::Macro::Array < Array
   end
   
   def bells_init_env env
+    super
+
     env[:to_s] = bells_create_a Macro::Func, self do |*a|
       _ = a.shift
       f = a.shift

@@ -1,3 +1,4 @@
 define namespace $ macro NAME *content
   define NAME $ object
+  NAME define to_s $ META_STRING NAME
   NAME eval *content

@@ -9,6 +9,7 @@ module Bells::Runtime::Macro
   end
   
   def bells_init_env env
+    #env[:self] = self
   end
   
   def bells_value rb_value

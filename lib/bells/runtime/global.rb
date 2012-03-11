@@ -14,6 +14,7 @@ class Bells::Runtime::Global < Bells::Runtime::Macro::Eval
   include BuiltinFunctions
 
   def bells_init_env env
+    super
     bells_init_env_singleton_objects env
     bells_init_env_environment_variables env
     bells_init_env_syntax_macros env

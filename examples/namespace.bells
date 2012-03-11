@@ -1,6 +1,8 @@
 namespace PASBERTH
+  puts self
   namespace examples
+    puts self
     def hello msg
       puts msg
-      
+
 PASBERTH examples hello "hello world"

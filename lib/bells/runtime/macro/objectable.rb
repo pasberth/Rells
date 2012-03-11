@@ -5,6 +5,7 @@ module Bells::Runtime::Macro::Objectable
   include Bells::Runtime::Macro
   
   def bells_init_env env
+    env[:self] = self
     env[:to_s] = bells_value("<a object 0x%x>"  % __id__)
   end
 

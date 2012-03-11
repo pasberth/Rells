@@ -10,6 +10,7 @@ class Bells::Runtime::Macro::String < String
   end
   
   def bells_init_env env
+    super
     env[:to_s] = self
   end
 end
