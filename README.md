@@ -1,6 +1,6 @@
 # Rells
 
-[test](Rells/doc/index.md)
+[test](Rells/master/doc/index.md)
 [test](/doc/index.md)
 [test](https://github.com/Pasberth/Rells/tree/master/doc/index.md)
 
