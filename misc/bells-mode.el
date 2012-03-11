@@ -5,14 +5,16 @@
     map)
   "Keymap used in Bells mode.")
 
+(defconst bells-symbol-re "[^\\\s]+")
+
 (defconst bells-font-lock-keywords
   (list
    ;; functions
-   '("^\\s *def\\s +\\([^( \t\n]+\\)"
-     1 font-lock-function-name-face)
+   (cons (concat "^ *def +\\(" bells-symbol-re "\\)")
+     '(1 font-lock-function-name-face))
    ;; keywords
    (cons (concat
-          "^\\\s*\\("
+          "^ *\\("
           (regexp-opt
            '("require"
              "array"
@@ -29,7 +31,7 @@
              "if"
              "while")
            t)
-          "\\)\\\s+")
+          "\\) +")
          2))
     "Additional expressions to highlight in Bells mode.")
 
