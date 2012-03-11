@@ -12,7 +12,7 @@
      1 font-lock-function-name-face)
    ;; keywords
    (cons (concat
-          "\\("
+          "^\\\s*\\("
           (regexp-opt
            '("require"
              "array"
@@ -29,7 +29,7 @@
              "if"
              "while")
            t)
-          "\\)")
+          "\\)\\\s+")
          2))
     "Additional expressions to highlight in Bells mode.")
 
