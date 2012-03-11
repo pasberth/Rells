@@ -9,30 +9,36 @@
 
 (defconst bells-font-lock-keywords
   (list
-   ;; functions
-   (cons (concat "^ *def +\\(" bells-symbol-re "\\)")
-     '(1 font-lock-function-name-face))
-   ;; keywords
-   (cons (concat
-          "^ *\\("
-          (regexp-opt
-           '("require"
-             "array"
-             "->"
-             "$"
-             "."
-             "--"
-             "macro"
-             "define"
-             "def"
-             "object"
-             "namespace"
-             "class"
-             "if"
-             "while")
-           t)
-          "\\) +")
-         2))
+     ;; functions
+     (cons (concat "^ *def +\\(" bells-symbol-re "\\)")
+       '(1 font-lock-function-name-face))
+     ;; keywords
+     (cons (concat
+       " *\\("
+       (regexp-opt
+         '( "require"
+            "array"
+            "->"
+            "$"
+            "."
+            "--"
+            "macro"
+            "define"
+            "def"
+            "object"
+            "namespace"
+            "class"
+            "if"
+            "while")
+         t)
+        "\\) +")
+      2)
+     ;; funcall
+     (cons (concat " *\\$ +\\(" bells-symbol-re "\\)")
+       '(1 font-lock-function-name-face))
+     ;; funcall
+     (cons (concat "^ *\\(" bells-symbol-re "\\)")
+       '(1 font-lock-function-name-face)))
     "Additional expressions to highlight in Bells mode.")
 
 
