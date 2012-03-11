@@ -34,7 +34,7 @@
         "\\) +")
       2)
      ;; funcall
-     (cons (concat " *\\$ +\\(" bells-symbol-re "\\)")
+     (cons (concat " *[\\$\\.] +\\(" bells-symbol-re "\\)")
        '(1 font-lock-function-name-face))
      ;; funcall
      (cons (concat "^ *\\(" bells-symbol-re "\\)")
