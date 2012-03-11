@@ -1,0 +1,7 @@
+$LOAD_PATH << "examples/require_inward"
+
+namespace PASBERTH
+  require "define_hello"
+  puts hello .... hello
+
+puts hello .... nil

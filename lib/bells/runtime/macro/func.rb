@@ -24,6 +24,7 @@ class Bells::Runtime::Macro::Func
       end
     end
     
-    @func.( @receiver, *args.map { |node| e.(node) } )
+    @func.( bells_env.receiver, self,
+            *args.map { |node| e.(node) } )
   end
 end

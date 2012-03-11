@@ -15,23 +15,23 @@ class Bells::Runtime::Macro::Integer < Bells::Runtime::Macro::Object
   end
   
   def bells_init_env env
-    env[:to_s] = env.create_a Macro::Func, self do |_, *a|
+    env[:to_s] = env.create_a Macro::Func, self do |_, f, *a|
       _.bells_value(_.to_rb.to_s)
     end
 
-    env[:+] = env.create_a Macro::Func, self do |_, *a|
+    env[:+] = env.create_a Macro::Func, self do |_, f, *a|
       _.bells_dynamic_create_a Macro::Integer, a.inject(_.to_rb) { |r, o| r + o.to_rb }
     end
 
-    env[:*] = env.create_a Macro::Func, self do |_, *a|
+    env[:*] = env.create_a Macro::Func, self do |_, f, *a|
       _.bells_dynamic_create_a Macro::Integer, a.inject(_.to_rb) { |r, o| r * o.to_rb }
     end
 
-    env[:-] = env.create_a Macro::Func, self do |_, *a|
+    env[:-] = env.create_a Macro::Func, self do |_, f, *a|
       _.bells_dynamic_create_a Macro::Integer, a.inject(_.to_rb) { |r, o| r - o.to_rb }
     end
 
-    env[:==] = env.create_a Macro::Func, self do |_, *a|
+    env[:==] = env.create_a Macro::Func, self do |_, f, *a|
       if _.to_rb == a[0].to_rb
         _.bells_env[:true]
       else
@@ -39,11 +39,11 @@ class Bells::Runtime::Macro::Integer < Bells::Runtime::Macro::Object
       end
     end
 
-    env[:/] = env.create_a Macro::Func, self do |_, *a|
+    env[:/] = env.create_a Macro::Func, self do |_, f, *a|
       _.bells_dynamic_create_a Macro::Integer, a.inject(_.to_rb) { |r, o| r / o.to_rb }
     end
 
-    env[:<] = env.create_a Macro::Func, self do |_, *a|
+    env[:<] = env.create_a Macro::Func, self do |_, f, *a|
       if _.to_rb < a[0].to_rb
         _.bells_env[:true]
       else
@@ -51,7 +51,7 @@ class Bells::Runtime::Macro::Integer < Bells::Runtime::Macro::Object
       end
     end
 
-    env[:>] = env.create_a Macro::Func, self do |_, *a|
+    env[:>] = env.create_a Macro::Func, self do |_, f, *a|
       if _.to_rb > a[0].to_rb
         _.bells_env[:true]
       else
@@ -59,11 +59,11 @@ class Bells::Runtime::Macro::Integer < Bells::Runtime::Macro::Object
       end
     end
     
-    env[:%] = env.create_a Macro::Func, self do |_, *a|
+    env[:%] = env.create_a Macro::Func, self do |_, f, *a|
       _.bells_dynamic_create_a Macro::Integer, a.inject(_.to_rb) { |r, o| r % o.to_rb }
     end
 
-    env[:times] = env.create_a Macro::Func, self do |_, *a|
+    env[:times] = env.create_a Macro::Func, self do |_, f, *a|
       a.inject(_.bells_env[:nil]) do |r, o|
         _.to_rb.times { |n| o.bells_eval Bells::Syntax::Node::Integer.new(n) } 
       end

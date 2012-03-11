@@ -84,9 +84,9 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     
     def symbol!
       # reserved words
-      unexpect '--'
-      unexpect '$'
-      s = many1(/[\w\+\?\/\=\%\-\>\<\*]/)
+      unexpect '-- '
+      unexpect '$ '
+      s = many1(/[\w\+\?\$\/\=\%\-\>\<\*]/)
       Node::Symbol.new s.join.intern
     end
     

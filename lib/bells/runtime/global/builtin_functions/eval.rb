@@ -6,7 +6,7 @@ require 'bells/runtime/global/builtin_functions'
 module Bells::Runtime::Global::BuiltinFunctions
 
   initial_load do |env|
-    env[:eval] = env.create_a Macro::Func, self do |_, *args|
+    env[:eval] = env.create_a Macro::Func, self do |_, f, *args|
       args.last
     end
   end

@@ -5,11 +5,11 @@ class Bells::Runtime::BellsEnv
 
   include Bells::Runtime
 
-  attr_reader :itself
-  attr_reader :receiver
+  attr_accessor :itself
+  attr_accessor :receiver
   attr_accessor :static_context
   attr_accessor :dynamic_context
-  
+
   def initialize receiver, itself=receiver
     @env = {}
     @receiver = receiver
@@ -39,7 +39,8 @@ class Bells::Runtime::BellsEnv
   
   def bind macro
     a = itself.clone
-    a.bells_env = a.bells_env.clone
+    a.bells_env = itself.bells_env.clone
+    a.bells_env.itself = a
     a.bells_env.dynamic_context = macro
     a
   end
