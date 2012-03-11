@@ -1,5 +1,9 @@
 # Rells
 
+[test](doc/index.md)
+[test](/doc/index.md)
+[test](https://github.com/Pasberth/Rells/tree/master/doc/index.md)
+
 This is development version yet.
 
 ## Requirement
