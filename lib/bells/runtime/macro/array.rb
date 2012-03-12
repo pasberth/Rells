@@ -1,27 +1,33 @@
 require 'bells/runtime/macro'
 require 'bells/runtime/macro/object'
 
-class Bells::Runtime::Macro::Array < Array
-  
-  include Bells::Runtime::Macro::Objectable
-  
-  def to_rb
-    map { |e| e.to_rb }
+class Bells::Runtime::Macro::Array < Bells::Runtime::Macro::Object
+
+  def == other
+    receiver == other.receiver
+  rescue
+    false
   end
-  
-  def bells_init_env env
+
+  def eql? other
+    receiver.eql? other.receiver
+  rescue
+    false
+  end
+
+  def hash
+    receiver.hash
+  end
+
+  def init_env env
     super
 
-    env[:to_s] = bells_create_a Macro::Func, self do |*a|
-      _ = a.shift
-      f = a.shift
-      bells_value('[%s]' % _.map { |e| e.bells_env[:to_s].bells_eval.to_rb }.join(', '))
+    env[:to_s] = create_a Macro::Func, self do |_, *a|
+      _.create_a(Macro::String, ('[%s]' % _.receiver.receiver.map { |e| e.env[:to_s].eval }.join(', ')))
     end
 
-    env[:<<] = bells_create_a Macro::Func, self do |*a|
-      _ = a.shift
-      f = a.shift
-      a.each { |e| _ << e }
+    env[:<<] = create_a Macro::Func, self do |_, *a|
+      a.each { |e| _.receiver.receiver << e }
       _
     end
   end

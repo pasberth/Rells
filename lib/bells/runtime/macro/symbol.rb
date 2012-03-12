@@ -1,51 +1,29 @@
 require 'bells/runtime/macro'
 
-class Bells::Runtime::Macro::Symbol
+class Bells::Runtime::Macro::Symbol < Bells::Runtime::Macro
   
-  include Bells::Runtime::Macro
-  
-  attr_reader :symbol
-  
-  def to_rb
-    @symbol
-  end
-  
-  def to_s
-    @symbol.to_s
-  end
-  
-  def inspect
-    @symbol.inspect
-  end
-  
-  def initialize symbol
-    @symbol = symbol
+  def eval *nodes
+    static_context.env[receiver]
   end
 
-  def bells_init_env env
+  def init_env env
     super
-    env[:to_s] = env.create_a Macro::Func, self do |_, f, *a|
-      _.bells_value _.to_s
-     end
+    env[:to_s] = create_a Macro::String, receiver.to_s
   end
-  
-  def bells_eval *nodes
-    bells_env.static_context.bells_env[self]
+
+  def == other
+    receiver == other.receiver
+  rescue
+    false
   end
 
   def eql? other
-    symbol.eql? other.symbol
+    receiver.eql? other.receiver
   rescue
     false
   end
-  
+
   def hash
-    @symbol.hash
-  end
-  
-  def == other
-    symbol == other.symbol
-  rescue
-    false
+    receiver.hash
   end
 end

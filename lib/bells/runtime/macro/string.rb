@@ -1,15 +1,33 @@
 require 'bells/runtime/macro'
 require 'bells/runtime/macro/object'
 
-class Bells::Runtime::Macro::String < String
+class Bells::Runtime::Macro::String < Bells::Runtime::Macro::Object
   
-  include Bells::Runtime::Macro::Objectable
-  
-  def to_rb
-    self
+  def to_s
+    receiver.to_s
   end
   
-  def bells_init_env env
+  def inspect
+    receiver.inspect
+  end
+  
+  def == other
+    receiver == other.receiver
+  rescue
+    false
+  end
+
+  def eql? other
+    receiver.eql? other.receiver
+  rescue
+    false
+  end
+
+  def hash
+    receiver.hash
+  end
+
+  def init_env env
     super
     env[:to_s] = self
   end

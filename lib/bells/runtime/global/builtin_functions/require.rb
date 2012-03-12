@@ -6,15 +6,15 @@ require 'bells/runtime/global/builtin_functions'
 module Bells::Runtime::Global::BuiltinFunctions
 
   initial_load do |env|
-    env[:require] = env.create_a Macro::Func, self do |_, f, *args|
+    env[:require] = create_a Macro::Func, self do |_, *args|
       fname = args.shift
-      env[:"$LOAD_PATH"].each do |path|
+      env[:"$LOAD_PATH"].receiver.each do |path|
         if File.exist? "#{path}/#{fname}.bellsc" and File.ctime("#{path}/#{fname}.bellsc") > File.ctime("#{path}/#{fname}.bells")
           fname = "#{path}/#{fname}.bellsc"
           io = open fname, "rb"
           toplevel = Bells::Syntax::Parser.new.decode_bellsc io
           io.close
-          f.bells_dynamic_eval toplevel
+          _.dynamic_context.eval toplevel
         elsif File.exist? "#{path}/#{fname}.bells"
           io = open "#{path}/#{fname}.bells"
           parser = Bells::Syntax::Parser.new
@@ -22,7 +22,7 @@ module Bells::Runtime::Global::BuiltinFunctions
           io.close
           bellsc = parser.encode_bellsc(toplevel)
           open "#{path}/#{fname}.bellsc", "wb" do |f| f.write bellsc end
-          f.bells_dynamic_eval toplevel
+          _.dynamic_context.eval toplevel
         end
       end
     end

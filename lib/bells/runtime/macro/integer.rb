@@ -2,88 +2,91 @@ require 'bells/runtime/macro'
 require 'bells/runtime/macro/object'
 
 class Bells::Runtime::Macro::Integer < Bells::Runtime::Macro::Object
+
   
-  def to_rb
-    @integer
+  def == other
+    receiver == other.receiver
+  rescue
+    false
   end
 
-  attr_reader :integer
-  
-  def initialize integer
-    super
-    @integer = integer
+  def eql? other
+    receiver.eql? other.receiver
+  rescue
+    false
   end
-  
-  def bells_init_env env
+
+  def hash
+    receiver.hash
+  end
+
+  def init_env env
     super
+    env[:to_s] = create_a Macro::String, receiver.to_s
 
-    env[:to_s] = env.create_a Macro::Func, self do |_, f, *a|
-      _.bells_value(_.to_rb.to_s)
+    env[:+] = create_a Macro::Func, self do |_, *a|
+      _.dynamic_context.create_a Macro::Integer, a.inject(_.receiver.receiver) { |r, o| r + o.receiver }
     end
 
-    env[:+] = env.create_a Macro::Func, self do |_, f, *a|
-      _.bells_dynamic_create_a Macro::Integer, a.inject(_.to_rb) { |r, o| r + o.to_rb }
+    env[:*] = create_a Macro::Func, self do |_, *a|
+      _.dynamic_context.create_a Macro::Integer, a.inject(_.receiver.receiver) { |r, o| r * o.receiver }
     end
 
-    env[:*] = env.create_a Macro::Func, self do |_, f, *a|
-      _.bells_dynamic_create_a Macro::Integer, a.inject(_.to_rb) { |r, o| r * o.to_rb }
+    env[:-] = create_a Macro::Func, self do |_, *a|
+      _.dynamic_context.create_a Macro::Integer, a.inject(_.receiver.receiver) { |r, o| r - o.receiver }
     end
 
-    env[:-] = env.create_a Macro::Func, self do |_, f, *a|
-      _.bells_dynamic_create_a Macro::Integer, a.inject(_.to_rb) { |r, o| r - o.to_rb }
-    end
-
-    env[:==] = env.create_a Macro::Func, self do |_, f, *a|
-      if _.to_rb == a[0].to_rb
-        _.bells_env[:true]
+    env[:==] = create_a Macro::Func, self do |_, *a|
+      if _.receiver.receiver == a[0].receiver
+        _.env[:true]
       else
-        _.bells_env[:false]
+        _.env[:false]
       end
     end
 
-    env[:/] = env.create_a Macro::Func, self do |_, f, *a|
-      _.bells_dynamic_create_a Macro::Integer, a.inject(_.to_rb) { |r, o| r / o.to_rb }
+    env[:/] = create_a Macro::Func, self do |_, *a|
+      _.dynamic_context.create_a Macro::Integer, a.inject(_.receiver.receiver) { |r, o| r / o.receiver }
     end
 
-    env[:<] = env.create_a Macro::Func, self do |_, f, *a|
-      if _.to_rb < a[0].to_rb
-        _.bells_env[:true]
+    env[:<] = create_a Macro::Func, self do |_, *a|
+      if _.receiver.receiver < a[0].receiver
+        _.env[:true]
       else
-        _.bells_env[:false]
+        _.env[:false]
       end
     end
 
-    env[:>] = env.create_a Macro::Func, self do |_, f, *a|
-      if _.to_rb > a[0].to_rb
-        _.bells_env[:true]
+    env[:>] = create_a Macro::Func, self do |_, *a|
+      if _.receiver.receiver > a[0].receiver
+        _.env[:true]
       else
-        _.bells_env[:false]
+        _.env[:false]
       end
     end
-    
-    env[:%] = env.create_a Macro::Func, self do |_, f, *a|
-      _.bells_dynamic_create_a Macro::Integer, a.inject(_.to_rb) { |r, o| r % o.to_rb }
+
+    env[:%] = create_a Macro::Func, self do |_, *a|
+      _.dynamic_context.create_a Macro::Integer, a.inject(_.receiver.receiver) { |r, o| r % o.receiver }
     end
 
-    env[:times] = env.create_a Macro::Func, self do |_, f, *a|
-      a.inject(_.bells_env[:nil]) do |r, o|
-        _.to_rb.times { |n| o.bells_eval Bells::Syntax::Node::Integer.new(n) } 
+    env[:times] = create_a Macro::Func, self do |_, *a|
+      a.inject(_.env[:nil]) do |r, o|
+        _.receiver.receiver.times { |n| o.eval Bells::Syntax::Node::Integer.new(n) } 
       end
     end
   end
 
   def eql? other
-    @integer.eql? other.integer
+    receiver.eql? other.receiver
   rescue
     false
   end
   
   def hash
-    @integer.hash
+    receiver.hash
   end
   
   def == other
-    integer == other.integer
+    receiver == other.receiver
   rescue
     false
   end

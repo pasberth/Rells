@@ -7,17 +7,16 @@ require 'stringio'
 
 buf = StringIO.new
 lex = Bells::Syntax::Lexer.new buf
-env = Bells::Runtime::Global.new
-env.bells_require 'bells/lang'
+global = Bells::Runtime::Global.new
+global.require 'bells/lang'
 beg = 0
 while (line = Readline.readline 'bells> ')
   buf.puts "\n#{line}"
   next if line  !~ /\A\s*\z/
   buf.seek beg
   while node = lex.token
-    result = env.bells_eval node
-    p result
-    puts "# => #{result.bells_env[:to_s].bells_eval}"
+    result = global.eval node
+    puts "# => #{result.env[:to_s].eval}"
   end
   beg = buf.pos
 end

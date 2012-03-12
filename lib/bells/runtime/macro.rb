@@ -1,73 +1,72 @@
 require 'bells/runtime'
 
-module Bells::Runtime::Macro
+class Bells::Runtime::Macro
   
   include Bells::Runtime
+
+  StaticProperties = Struct.new :static_context, :receiver, :env
+  DynamicProperties = Struct.new :dynamic_context
   
-  def to_rb
-    self
-  end
-  
-  def bells_init_env env
-    #env[:self] = self
-  end
-  
-  def bells_value rb_value
-    case rb_value
-    when ::Symbol then bells_env.create_a Bells::Runtime::Macro::Symbol, rb_value
-    when ::String then bells_env.create_a Bells::Runtime::Macro::String, rb_value
-    when ::Array then bells_env.create_a Bells::Runtime::Macro::Array, rb_value.map { |e| bells_value e }
-    when ::Integer then bells_env.create_a Bells::Runtime::Macro::Integer, rb_value
-    else rb_value
-    end
+  attr_accessor :static_properties, :dynamic_properties
+  protected :static_properties=, :dynamic_properties=
+
+  def initialize static_context, receiver=self
+    @static_properties = StaticProperties.new static_context, receiver, Env.new(self)
+    @dynamic_properties = DynamicProperties.new static_context
   end
 
-  def bells_env
-    @bells_env ||= Bells::Runtime::BellsEnv.new(self)
+  [:receiver, :static_context, :env].each do |prop|
+    class_eval(<<-CODE)
+     def #{prop}
+       @static_properties.#{prop}
+     end
+     
+     def #{prop}= value
+       @static_properties.#{prop} = value
+     end
+     
+     protected :#{prop}=
+    CODE
   end
   
-  def bells_env= env
-    @bells_env = env
+  [:dynamic_context].each do |prop|
+    class_eval(<<-CODE)
+     def #{prop}
+       @dynamic_properties.#{prop}
+     end
+     
+     def #{prop}= value
+       @dynamic_properties.#{prop} = value
+     end
+     
+     protected :#{prop}=
+    CODE
   end
   
-  def bells_bind receiver
-    bells_env.bind receiver
+  def init_env env
+    env[:self] = self
+    env[:to_s] = create_a Macro::Func, self do |_, *a|
+      _.create_a Macro::String, _.receiver.to_s
+    end
   end
   
-  def bells_create_a *args, &block
-    bells_env.create_a *args, &block
+  def bind macro
+    val = clone
+    val.dynamic_properties = dynamic_properties.clone
+    val.dynamic_context = macro
+    val
   end
   
-  def bells_static_create_a *args, &block
-    bells_env.static_create_a *args, &block
+  def create_a macro_class, *args, &block
+    macro_class.new self, *args, &block
+  end
+
+  def condition
+    true
   end
   
-  def bells_dynamic_create_a *args, &block
-    bells_env.dynamic_create_a *args, &block
-  end
-  
-  def bells_eval *args, &block
-    bells_env.eval *args, &block
-  end
-  
-  def bells_static_eval *args, &block
-    bells_env.static_eval *args, &block
-  end
-  
-  def bells_dynamic_eval *args, &block
-    bells_env.dynamic_eval *args, &block
-  end
-  
-  def bells_require *args, &block
-    bells_env.require *args, &block
-  end
-  
-  def bells_condition
-    bells_env.condition
-  end
-  
-  def to_s
-    "<%s:%s>" % [bells_env[:to_s].bells_eval.to_rb, self.class]
+  def require path
+    env[:require].eval(Bells::Syntax::Node::String.new path)
   end
 end
 

@@ -1,30 +1,24 @@
 require 'bells/runtime/macro'
 
-class Bells::Runtime::Macro::Func
-  include Bells::Runtime::Macro
+class Bells::Runtime::Macro::Func < Bells::Runtime::Macro
   
-  def initialize receiver, &native_function
+  def initialize static_context, receiver=self, &native_function
     super
-    @receiver = receiver
     @func = native_function
   end
   
-  def bells_env
-    @bells_env ||= ::Bells::Runtime::BellsEnv.new @receiver, self 
-  end
-  
-  def bells_eval *args
+  def eval *args
     e = ->(node) do
       case node
-      when Bells::Syntax::Node::Symbol then bells_dynamic_create_a(Macro::Symbol, node.symbol).bells_eval
-      when Bells::Syntax::Node::String then bells_dynamic_create_a(Macro::String, node.string).bells_eval
-      when Bells::Syntax::Node::Integer then bells_dynamic_create_a(Macro::Integer, node.integer).bells_eval
+      when Bells::Syntax::Node::Symbol then dynamic_context.create_a(Macro::Symbol, node.symbol).eval
+      when Bells::Syntax::Node::String then dynamic_context.create_a(Macro::String, node.string).eval
+      when Bells::Syntax::Node::Integer then dynamic_context.create_a(Macro::Integer, node.integer).eval
       when Bells::Syntax::Node::Macro
-        e.(node.node).bells_eval *node.args
+        e.(node.node).eval *node.args
       end
     end
     
-    @func.( bells_env.receiver, self,
+    @func.( self,
             *args.map { |node| e.(node) } )
   end
 end

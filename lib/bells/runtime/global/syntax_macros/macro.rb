@@ -5,10 +5,10 @@ require 'bells/runtime/global/syntax_macros'
 module Bells::Runtime::Global::SyntaxMacros
 
   initial_load do |env|
-    env[:macro] = env.create_a Macro::PureMacro do |_, *nodes|
+    env[:macro] = create_a Macro::PureMacro do |_, *nodes|
       params = nodes.take_while { |a| a.is_a? Bells::Syntax::Node::Symbol }
       stats = nodes.drop_while { |a| a.is_a? Bells::Syntax::Node::Symbol }
-      _.bells_dynamic_create_a Macro::PureMacro do |_, *args|
+      _.dynamic_context.create_a Macro::PureMacro do |_, *args|
         args = Hash[*params.flat_map do |a|
           case a.symbol[0]
           when '*'
@@ -16,7 +16,7 @@ module Bells::Runtime::Global::SyntaxMacros
             args.clear
             ret
           else
-            [a, args.shift || _.bells_env.dynamic_context[:nil]]
+            [a, args.shift || _.dynamic_context.env[:nil]]
           end
         end]
         rest = args
@@ -34,7 +34,7 @@ module Bells::Runtime::Global::SyntaxMacros
             node
           end
         end
-        _.bells_dynamic_eval *stats.map { |node| expand.(node) }
+        _.dynamic_context.eval *stats.map { |node| expand.(node) }
       end
     end
   end

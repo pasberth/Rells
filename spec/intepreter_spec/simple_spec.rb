@@ -5,7 +5,7 @@ describe do
   subject { Bells::Runtime::Global.new }
   
   example do
-    subject.bells_eval_str(<<-CODE).should == subject.bells_value("a")
+    subject.bells_eval_str(<<-CODE).should == subject.create_a(Bells::Runtime::Macro::String, "a")
       ----
       This should ignore
       ----
@@ -14,7 +14,7 @@ describe do
   end
 
   example do
-    ret = subject.bells_eval_str(<<-CODE).should == subject.bells_value(%w[hello bells world])
+    ret = subject.bells_eval_str(<<-CODE).should == subject.create_a(Bells::Runtime::Macro::Array, %w[hello bells world].map { |e| subject.create_a(Bells::Runtime::Macro::String, e)})
       define f
         -> a
           -> b
@@ -33,7 +33,7 @@ describe do
           a
     CODE
 
-    subject.bells_eval_str('f "a"').should == subject.bells_value("a")
+    subject.bells_eval_str('f "a"').should == subject.create_a(Bells::Runtime::Macro::String, "a")
   end
 
   example do
@@ -41,6 +41,6 @@ describe do
       define f $ -> a $ a
     CODE
 
-    subject.bells_eval_str('f "a"').should == subject.bells_value("a")
+    subject.bells_eval_str('f "a"').should == subject.create_a(Bells::Runtime::Macro::String, "a")
   end
 end

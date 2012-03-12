@@ -64,14 +64,14 @@ class Bells::Interpreter::Main
   end
 
   def run *args
-    @global.bells_require 'bells/lang'
+    @global.require 'bells/lang'
     if f = options[:main]
       node = @parser.parse f
     elsif f = options[:main_bellsc]
       node = @parser.decode_bellsc f
     end
     puts node
-    @global.bells_eval node
+    @global.eval node
     true
   end
 end

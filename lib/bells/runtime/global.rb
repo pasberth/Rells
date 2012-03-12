@@ -1,6 +1,10 @@
 require 'bells/runtime'
 
 class Bells::Runtime::Global < Bells::Runtime::Macro::Eval
+  
+  def initialize
+    super nil
+  end
 
   require 'bells/runtime/global/initial_loader'
   require 'bells/runtime/global/singleton_objects' 
@@ -13,7 +17,7 @@ class Bells::Runtime::Global < Bells::Runtime::Macro::Eval
   include SyntaxMacros
   include BuiltinFunctions
 
-  def bells_init_env env
+  def init_env env
     super
     bells_init_env_singleton_objects env
     bells_init_env_environment_variables env
@@ -21,7 +25,7 @@ class Bells::Runtime::Global < Bells::Runtime::Macro::Eval
     bells_init_env_builtin_functions env
 
     env[:global] = self
-    env[:to_s] = bells_value "(global)"
+    env[:to_s] = create_a Macro::String, "(global)"
     env[:nil?] = env[:false]
   end
 end

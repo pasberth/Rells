@@ -5,10 +5,10 @@ require 'bells/runtime/global/syntax_macros'
 module Bells::Runtime::Global::SyntaxMacros
 
   initial_load do |env|
-    env[:define] = bells_create_a Macro::PureMacro do |_, *nodes|
-      var = _.bells_env.dynamic_context.bells_create_a Macro::Symbol, nodes.shift.symbol
-      val = _.bells_env.dynamic_context.bells_eval nodes.shift
-      _.bells_env.dynamic_context.bells_env[var] = val
+    env[:define] = create_a Macro::PureMacro do |_, *nodes|
+      var = nodes.shift.symbol
+      val = _.dynamic_context.eval nodes.shift
+      _.dynamic_context.env[var] = val
       val
     end
   end

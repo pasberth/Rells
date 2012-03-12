@@ -7,8 +7,8 @@ module Bells::Runtime::Global::SingletonObjects
   extend Bells::Runtime::Global::InitialLoader
   
   def bells_init_env_singleton_objects env
-    env[:nil] = env.create_a Macro::Nil
-    env[:true] = env.create_a Macro::True
-    env[:false] = env.create_a Macro::False
+    env[:nil] = create_a Macro::Nil
+    env[:true] = create_a Macro::True
+    env[:false] = create_a Macro::False
   end
 end
