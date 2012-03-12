@@ -8,6 +8,10 @@ class Bells::Syntax::Node::Symbol < Bells::Syntax::Node
     @symbol = symbol
   end
   
+  def dump_bellsc
+    "#{BELLSC_SYMBOL_BEGIN}#{symbol}#{BELLSC_EXP_END}"
+  end
+  
   def eql? other
     @symbol.eql? other.symbol
   rescue

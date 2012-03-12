@@ -1,6 +1,9 @@
 require 'bells/syntax'
+require 'bells/syntax/bellsc'
 
 class Bells::Syntax::Node
+  include Bells::Syntax
+  include Bells::Syntax::Bellsc
 end
 
 require 'bells/syntax/node/symbol'

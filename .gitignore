@@ -1,3 +1,4 @@
+*.bellsc
 *.gem
 pkg
 .DS_Store

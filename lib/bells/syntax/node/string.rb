@@ -8,6 +8,10 @@ class Bells::Syntax::Node::String < Bells::Syntax::Node
     @string = string
   end
   
+  def dump_bellsc
+    "#{BELLSC_STRING_BEGIN}#{string}#{BELLSC_EXP_END}"
+  end
+
   def == other
     string == other.string
   rescue

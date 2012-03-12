@@ -5,8 +5,17 @@ class Bells::Syntax::Node::Macro < Bells::Syntax::Node
   attr_reader :node, :args
 
   def initialize node, *args
-    @node= node
+    @node = node
     @args = args
+  end
+  
+  def dump_bellsc
+    bellsc = ""
+    bellsc << BELLSC_MACRO_BEGIN
+    bellsc << node.dump_bellsc
+    args.each { |a| bellsc << a.dump_bellsc }
+    bellsc << BELLSC_EXP_END
+    bellsc
   end
   
   def == other

@@ -8,6 +8,10 @@ class Bells::Syntax::Node::Integer < Bells::Syntax::Node
     @integer = integer
   end
   
+  def dump_bellsc
+    "#{BELLSC_INTEGER_BEGIN}#{integer}#{BELLSC_EXP_END}"
+  end
+  
   def == other
     integer == other.integer
   rescue

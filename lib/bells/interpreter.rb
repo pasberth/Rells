@@ -9,10 +9,9 @@ module Bells
     
     extend self
   
-    def bells argv
-      f = argv.shift
-      main = Main.new main: open(f)
-      main.run
+    def bells *argv
+      main = Main.new
+      main.main *argv
     end
   end
 end

@@ -6,6 +6,7 @@ module Bells
 end
 
 require 'bells/core_ext'
+require 'bells/syntax/bellsc'
 require 'bells/syntax/node'
 require 'bells/syntax/lexer'
 require 'bells/syntax/parser'
