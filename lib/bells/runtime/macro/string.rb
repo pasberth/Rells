@@ -7,6 +7,10 @@ class Bells::Runtime::Macro::String < Bells::Runtime::Macro::Object
     receiver.to_s
   end
   
+  def to_str
+    receiver.to_str
+  end
+  
   def inspect
     receiver.inspect
   end

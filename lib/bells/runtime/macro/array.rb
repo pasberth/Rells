@@ -2,6 +2,10 @@ require 'bells/runtime/macro'
 require 'bells/runtime/macro/object'
 
 class Bells::Runtime::Macro::Array < Bells::Runtime::Macro::Object
+  
+  def to_s
+    receiver.to_s
+  end
 
   def == other
     receiver == other.receiver

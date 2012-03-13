@@ -1,0 +1,2 @@
+puts rb_value .... "hello"
+rb_value << " world"
