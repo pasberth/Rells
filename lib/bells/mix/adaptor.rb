@@ -6,15 +6,9 @@ class Bells::Mix::Adaptor < Bells::Runtime::Macro::Object
     super
     receiver.methods.each do |f|
       env[f] = create_a Macro::Func, receiver do |_, *a|
-        _.create_a ::Bells::Mix::Adaptor,  _.receiver.send(f, *a)
+        _.create_a ::Bells::Mix::Adaptor,  _.receiver.send(f, *a.map { |e| e.receiver })
       end
     end
-  end
-
-  def method_missing f, *a, &b
-    super unless [:to_str, :to_sym, :to_io, :to_ary, :to_proc, :to_hash, :to_regexp, :to_int, :to_float].include? f 
-    super unless receiver.respond_to? f
-    f.send f, *a, &b
   end
 
   def to_s
@@ -39,7 +33,6 @@ class Bells::Mix::RBAdaptor < BasicObject
   end
 
   def []= key, value
-    p key, value
     ::Bells::Mix::RBAdaptor.new(@bells_macro.env[key] = @bells_macro.create_a(::Bells::Mix::Adaptor, value))
   end
 
