@@ -3,7 +3,7 @@ require 'bells/runtime/macro'
 class Bells::Runtime::Macro::Symbol < Bells::Runtime::Macro
   
   def eval *nodes
-    static_context.env[receiver]
+    dynamic_context.env[receiver]
   end
 
   def init_env env

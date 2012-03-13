@@ -70,8 +70,8 @@ class Bells::Interpreter::Main
     elsif f = options[:main_bellsc]
       node = @parser.decode_bellsc f
     end
-    puts node
-    @global.eval node
+    node = @global.syntax_node_to_runtime_node(node)
+    @global.eval(node)
     true
   end
 end

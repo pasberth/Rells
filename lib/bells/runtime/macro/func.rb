@@ -8,17 +8,7 @@ class Bells::Runtime::Macro::Func < Bells::Runtime::Macro
   end
   
   def eval *args
-    e = ->(node) do
-      case node
-      when Bells::Syntax::Node::Symbol then dynamic_context.create_a(Macro::Symbol, node.symbol).eval
-      when Bells::Syntax::Node::String then dynamic_context.create_a(Macro::String, node.string).eval
-      when Bells::Syntax::Node::Integer then dynamic_context.create_a(Macro::Integer, node.integer).eval
-      when Bells::Syntax::Node::Macro
-        e.(node.node).eval *node.args
-      end
-    end
-    
     @func.( self,
-            *args.map { |node| e.(node) } )
+            *args.map { |node| node.bind(dynamic_context).eval } )
   end
 end

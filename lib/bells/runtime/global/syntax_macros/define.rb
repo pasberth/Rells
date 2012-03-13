@@ -6,7 +6,7 @@ module Bells::Runtime::Global::SyntaxMacros
 
   initial_load do |env|
     env[:define] = create_a Macro::PureMacro do |_, *nodes|
-      var = nodes.shift.symbol
+      var = nodes.shift.receiver
       val = _.dynamic_context.eval nodes.shift
       _.dynamic_context.env[var] = val
       val

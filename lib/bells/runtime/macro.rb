@@ -66,18 +66,33 @@ class Bells::Runtime::Macro
   end
   
   def require path
-    env[:require].eval(Bells::Syntax::Node::String.new path)
+    env[:require].eval(create_a Macro::String, path)
+  end
+
+  def syntax_node_to_runtime_node node
+    e = ->(node) do
+      case node
+      when Bells::Syntax::Node::Symbol then create_a(Macro::Node::Symbol, node.symbol)
+      when Bells::Syntax::Node::String then create_a(Macro::Node::String, node.string)
+      when Bells::Syntax::Node::Integer then create_a(Macro::Node::Integer, node.integer)
+      when Bells::Syntax::Node::Macro
+        create_a(Macro::Node::Macro, [node.node, *node.args].map { |a| e.(a) })
+      end
+    end
+    
+    e.(node)
   end
 end
 
+require 'bells/runtime/macro/symbol'
+require 'bells/runtime/macro/string'
+require 'bells/runtime/macro/integer'
+require 'bells/runtime/macro/node'
 require 'bells/runtime/macro/object'
 require 'bells/runtime/macro/pure_macro'
 require 'bells/runtime/macro/eval'
 require 'bells/runtime/macro/nil'
 require 'bells/runtime/macro/true'
 require 'bells/runtime/macro/false'
-require 'bells/runtime/macro/symbol'
-require 'bells/runtime/macro/string'
-require 'bells/runtime/macro/integer'
 require 'bells/runtime/macro/func'
 require 'bells/runtime/macro/array'

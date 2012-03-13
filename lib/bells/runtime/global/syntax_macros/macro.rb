@@ -3,14 +3,14 @@ require 'bells/runtime/global'
 require 'bells/runtime/global/syntax_macros'
 
 module Bells::Runtime::Global::SyntaxMacros
-
+  
   initial_load do |env|
     env[:macro] = create_a Macro::PureMacro do |_, *nodes|
-      params = nodes.take_while { |a| a.is_a? Bells::Syntax::Node::Symbol }
-      stats = nodes.drop_while { |a| a.is_a? Bells::Syntax::Node::Symbol }
+      params = nodes.take_while { |a| a.is_a? Macro::Node::Symbol }
+      stats = nodes.drop_while { |a| a.is_a? Macro::Node::Symbol }
       _.dynamic_context.create_a Macro::PureMacro do |_, *args|
         args = Hash[*params.flat_map do |a|
-          case a.symbol[0]
+          case a.receiver[0]
           when '*'
             ret = [a, args.clone]
             args.clear
@@ -22,14 +22,14 @@ module Bells::Runtime::Global::SyntaxMacros
         rest = args
         expand = ->(node) do
           case node
-          when Bells::Syntax::Node::Symbol
+          when Macro::Node::Symbol
             if params.include? node
               args[node]
             else
               node
             end
-          when Bells::Syntax::Node::Macro
-            Bells::Syntax::Node::Macro.new expand.(node.node), *node.args.flat_map { |a| expand.(a) }
+          when Macro::Node::Macro
+            create_a(Macro::Node::Macro, node.receiver.flat_map { |a| expand.(a) })
           else
             node
           end

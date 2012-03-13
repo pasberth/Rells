@@ -6,9 +6,10 @@ module Bells::Runtime::Global::SyntaxMacros
 
   initial_load do |env|
     env[:if] = create_a Macro::PureMacro do |_, *nodes|
-      cond, stats = nodes.split_in_while { |a| not a.is_a? Bells::Syntax::Node::Macro }
+      
+      cond, stats = nodes.split_in_while { |a| not a.is_a? Macro::Node::Macro }
       unless cond.empty?
-        cond = Bells::Syntax::Node::Macro.new(cond[0], *cond[1..-1])
+        cond = _.dynamic_context.create_a(Macro::Node::Macro, cond)
       else
         cond = stats.shift
       end

@@ -7,6 +7,27 @@ describe Bells::Runtime::Global do
   end
   
   example do
+    node = Node::Macro.new(
+            Node::Symbol.new(:puts),
+            Node::String.new("hello world"),
+            Node::Macro.new(
+              Node::Symbol.new(:array),
+              Node::Symbol.new(:e),
+              Node::Symbol.new(:f),
+              Node::Symbol.new(:g)
+            ))
+    subject.syntax_node_to_runtime_node(node).should == Macro::Node.new(
+            Macro::Node.new(:puts),
+            Macro::Node.new("hello world"),
+            Macro::Node.new(
+              Macro::Node.new(:array),
+              Macro::Node.new(:e),
+              Macro::Node.new(:f),
+              Macro::Node.new(:g)
+            ))
+  end
+  
+  example do
     str = subject.create_a Bells::Runtime::Macro::String, "string"
     str.env[:to_s].eval.should == subject.create_a(Bells::Runtime::Macro::String, "string")
   end

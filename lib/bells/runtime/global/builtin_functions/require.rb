@@ -14,6 +14,7 @@ module Bells::Runtime::Global::BuiltinFunctions
           io = open fname, "rb"
           toplevel = Bells::Syntax::Parser.new.decode_bellsc io
           io.close
+          toplevel = syntax_node_to_runtime_node toplevel
           _.dynamic_context.eval toplevel
         elsif File.exist? "#{path}/#{fname}.bells"
           io = open "#{path}/#{fname}.bells"
@@ -22,9 +23,11 @@ module Bells::Runtime::Global::BuiltinFunctions
           io.close
           bellsc = parser.encode_bellsc(toplevel)
           open "#{path}/#{fname}.bellsc", "wb" do |f| f.write bellsc end
+          toplevel = syntax_node_to_runtime_node toplevel
           _.dynamic_context.eval toplevel
         end
       end
+      _.env[:true]
     end
 
   end

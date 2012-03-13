@@ -3,23 +3,6 @@ require 'bells/runtime/macro/object'
 
 class Bells::Runtime::Macro::Integer < Bells::Runtime::Macro::Object
 
-  
-  def == other
-    receiver == other.receiver
-  rescue
-    false
-  end
-
-  def eql? other
-    receiver.eql? other.receiver
-  rescue
-    false
-  end
-
-  def hash
-    receiver.hash
-  end
-
   def init_env env
     super
     env[:to_s] = create_a Macro::String, receiver.to_s
@@ -70,7 +53,7 @@ class Bells::Runtime::Macro::Integer < Bells::Runtime::Macro::Object
 
     env[:times] = create_a Macro::Func, self do |_, *a|
       a.inject(_.env[:nil]) do |r, o|
-        _.receiver.receiver.times { |n| o.eval Bells::Syntax::Node::Integer.new(n) } 
+        _.receiver.receiver.times { |n| o.eval create_a(Macro::Node::Integer, n) } 
       end
     end
   end

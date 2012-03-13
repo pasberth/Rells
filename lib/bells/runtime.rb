@@ -4,7 +4,6 @@ module Bells
 end
 
 require 'bells/core_ext'
-require 'bells/syntax'
 require 'bells/runtime/env'
 require 'bells/runtime/macro'
 require 'bells/runtime/global'

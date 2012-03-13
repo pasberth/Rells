@@ -15,7 +15,7 @@ while (line = Readline.readline 'bells> ')
   next if line  !~ /\A\s*\z/
   buf.seek beg
   while node = lex.token
-    result = global.eval node
+    result = global.eval global.syntax_node_to_runtime_node node
     puts "# => #{result.env[:to_s].eval}"
   end
   beg = buf.pos
