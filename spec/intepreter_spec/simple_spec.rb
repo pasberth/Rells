@@ -43,4 +43,10 @@ describe do
 
     subject.bells_eval_str('f "a"').should == subject.create_a(Bells::Runtime::Macro::String, "a")
   end
+
+  example do
+    subject.bells_eval_str(<<-CODE).should == subject
+      self
+    CODE
+  end
 end

@@ -83,6 +83,12 @@ class Bells::Runtime::Macro
     
     e.(node)
   end
+  
+  def == other
+    receiver.__id__ == other.__id__
+  rescue
+    false
+  end
 end
 
 require 'bells/runtime/macro/symbol'

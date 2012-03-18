@@ -39,7 +39,7 @@ describe Bells::Runtime::Global do
   
   example do
     func = subject.create_a Bells::Runtime::Macro::Func, subject do |_, *a|
-      _.should == func
+      _.should be_equal func
       _.receiver.should == subject
       "return value"
     end
