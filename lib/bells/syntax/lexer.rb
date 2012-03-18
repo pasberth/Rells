@@ -86,7 +86,7 @@ class Bells::Syntax::Lexer < PasParse::Lexer
       # reserved words
       unexpect '-- '
       unexpect '$ '
-      s = many1(/[\w\+\?\$\/\=\%\-\>\<\*]/)
+      s = many1(/[\w\&\+\?\$\/\=\%\-\>\<\*]/)
       Node::Symbol.new s.join.intern
     end
     

@@ -1,11 +1,11 @@
-define class $ macro ClassName *defination
-  
+define class $ macro ClassName superclass &defination
+
   define ClassName $ object
   ClassName define to_s $ META_STRING ClassName
 
   ClassName def new
     define instance $ object
     instance define class ClassName
-    instance eval *defination
+    instance eval &defination
     instance initialize
     instance

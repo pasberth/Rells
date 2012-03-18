@@ -1,4 +1,4 @@
-define while $ macro cond *block
-  if cond
-    eval *block
-      while cond *block
+define while $ macro *cond &block
+  if *cond
+    eval &block
+      while *cond &block

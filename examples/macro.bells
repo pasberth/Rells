@@ -1,5 +1,5 @@
-define a $ macro funcall
+define a $ macro &funcall
     define x "hello"
-    funcall
+    &funcall
 
 a $ puts x

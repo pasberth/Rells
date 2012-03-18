@@ -1,6 +1,5 @@
 define x 0
 
-while
-  x < 5
+while x < 5
   puts x
   define x $ x + 1

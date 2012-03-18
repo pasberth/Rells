@@ -20,6 +20,7 @@ class Array
     pop(result.count) if block_given?
     result
   end
-  
+
+  alias shift_while take_while!  
   alias pop_while drop_while!
 end
