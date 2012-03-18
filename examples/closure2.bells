@@ -1,0 +1,13 @@
+def counter
+  define i 0
+  define CLOSURE self
+  ->
+    define n 1
+    puts i
+    CLOSURE $ define i $ i + n
+
+define count $ counter
+count .... 0
+count .... 1
+count .... 2
+count .... 3

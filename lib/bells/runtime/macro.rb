@@ -54,6 +54,7 @@ class Bells::Runtime::Macro
     val = clone
     val.dynamic_properties = dynamic_properties.clone
     val.dynamic_context = macro
+    val.env = env.bind( val )
     val
   end
   
