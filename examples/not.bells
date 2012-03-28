@@ -1,0 +1,3 @@
+if not false
+    puts "true!"
+    puts "false!"
