@@ -1,5 +1,0 @@
-define or $ macro a *as &or_else
-    if
-       
-       a
-       or *as &or_else
