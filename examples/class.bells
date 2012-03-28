@@ -1,3 +1,6 @@
+----------------------------------------
+  Define a class
+----------------------------------------
 class Test
 
   def initialize
@@ -6,6 +9,24 @@ class Test
   def hello msg
     puts msg
 
-define test $ Test new
+define test $ Test new   ____ instance created
 
-test hello "hello world"
+test hello "hello world" ____ hello world
+puts $ test class        ____ Test
+
+----------------------------------------
+  Extends the Test
+----------------------------------------
+class Sub Test
+
+  def initialize
+    puts "overrided the constructor"
+
+  def foo
+    puts "bar"
+
+define sub $ Sub new          ____ instance created
+                              ____ overrided the constructor
+sub hello "hello inheritance" ____ hello inheritance
+sub foo                       ____ bar
+puts $ sub class              ____ Sub

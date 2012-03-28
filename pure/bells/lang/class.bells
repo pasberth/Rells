@@ -3,9 +3,15 @@ define class $ macro ClassName superclass &defination
   define ClassName $ object
   ClassName define to_s $ META_STRING ClassName
 
-  ClassName def new
-    define instance $ object
+  ClassName def allocate
+    if superclass
+      define instance $ superclass new
+      define instance $ object
     instance define class ClassName
     instance eval &defination
+    instance
+
+  ClassName def new
+    define instance $ ClassName allocate
     instance initialize
     instance
