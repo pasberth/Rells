@@ -7,10 +7,6 @@ class Bells::Runtime::Macro::String < Bells::Runtime::Macro::Object
     receiver.to_s
   end
   
-  # def to_str
-  #   receiver.to_str
-  # end
-  
   def inspect
     receiver.inspect
   end
@@ -34,5 +30,12 @@ class Bells::Runtime::Macro::String < Bells::Runtime::Macro::Object
   def init_env env
     super
     env[:to_s] = self
+    env[:==] = create_a Macro::Func, self do |_, *a|
+      if _.receiver.receiver == a[0].receiver
+        _.env[:true]
+      else
+        _.env[:false]
+      end
+    end
   end
 end

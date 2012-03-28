@@ -25,6 +25,7 @@ class Bells::Runtime::Global < Bells::Runtime::Macro::Eval
     bells_init_env_builtin_functions env
 
     env[:global] = self
+    env[:self] = self
     env[:to_s] = create_a Macro::String, "(global)"
     env[:nil?] = env[:false]
   end

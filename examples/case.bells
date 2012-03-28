@@ -1,0 +1,14 @@
+define ac "Acrdona"
+define fagesy "Fagesybaryth"
+
+def print_lover target
+    case target
+      when fagesy
+        puts "Acrdona"
+      when fagesy
+        puts "This code will not execute."
+      when ac
+        puts "Fagesybaryth"
+
+print_lover fagesy  .... Acrdona
+print_lover ac      .... Fagesybaryth

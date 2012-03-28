@@ -41,6 +41,7 @@ class Bells::Syntax::Lexer < PasParse::Lexer
     
     def one_line_comment!
       expect! "\n"
+      many "\n"
       many ' '
       mark = expect(/(?!\s)./)
       3.times { expect(mark) }
@@ -54,6 +55,7 @@ class Bells::Syntax::Lexer < PasParse::Lexer
       else
         expect! "\n"
       end
+      many "\n"
       many ' '
       comment_frame  = ""
       mark = expect(/(?!\s)./)
@@ -86,7 +88,7 @@ class Bells::Syntax::Lexer < PasParse::Lexer
       # reserved words
       unexpect '-- '
       unexpect '$ '
-      s = many1(/[\w\&\+\?\$\/\=\%\-\>\<\*]/)
+      s = many1(/[\w\&\#\+\?\$\/\=\%\-\>\<\*]/)
       Node::Symbol.new s.join.intern
     end
     

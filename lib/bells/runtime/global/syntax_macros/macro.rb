@@ -17,6 +17,12 @@ module Bells::Runtime::Global::SyntaxMacros
             ret = [a, args.clone]
             args.clear
             ret
+          when '#'
+            if args.first and args.first.is_a? Macro::Node::Macro
+              [a, args.shift]
+            else
+              [a, _.dynamic_context.env[:nil]]
+            end
           else
             if args.first and !args.first.is_a? Macro::Node::Macro
               [a, args.shift]

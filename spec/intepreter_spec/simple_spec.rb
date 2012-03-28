@@ -49,4 +49,12 @@ describe do
       self
     CODE
   end
+
+  example do
+    subject.bells_eval_str(<<-CODE)
+      define f $ -> $ self
+    CODE
+
+    subject.bells_eval_str('f').should == subject
+  end
 end

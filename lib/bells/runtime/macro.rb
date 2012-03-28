@@ -44,7 +44,6 @@ class Bells::Runtime::Macro
   end
   
   def init_env env
-    env[:self] = self
     env[:to_s] = create_a Macro::Func, self do |_, *a|
       _.create_a Macro::String, _.receiver.to_s
     end

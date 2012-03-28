@@ -17,18 +17,15 @@ class Bells::Runtime::Env
     val = clone
     val.macro = macro
     val
+    self
   end
   
   def find key
     raise "ID must be a Symbol" unless key.respond_to? :to_sym
-    if val = @env[key]
-      val
-    elsif val = @macro.static_context && @macro.static_context.env.find(key)
-      val
-    elsif val = @macro.dynamic_context && @macro.dynamic_context.env.find(key)
-      val
-    else
-      nil
+    if val = @env[key] then val
+    elsif @macro.static_context and val = @macro.static_context.env.find(key) then val
+    elsif @macro.dynamic_context and val = @macro.dynamic_context.env.find(key) then val
+    else nil
     end
   end
   
@@ -42,13 +39,25 @@ class Bells::Runtime::Env
         self[:nil]
       end
     end
-    @macro.init_env self
+    init_env
     self[key]
   end
   
   def []= key, val
-    raise "ID must be a Symbol" unless key.respond_to? :to_sym
-    @env[key.to_sym] = val
-    val
+    def self.[]= key, val
+      raise "ID must be a Symbol" unless key.respond_to? :to_sym
+      @env[key.to_sym] = val
+      val
+    end
+    init_env
+    self[key] = val
   end
+  
+  private
+    def init_env
+      unless @initialized_env
+        @macro.init_env self
+        @initialized_env = true
+      end
+    end
 end

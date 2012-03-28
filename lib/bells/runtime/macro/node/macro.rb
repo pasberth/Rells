@@ -9,8 +9,12 @@ class Bells::Runtime::Macro::Node::Macro < Bells::Runtime::Macro::Node
   end
 
   def eval *nodes
-    val, args = receiver[0].eval, receiver[1..-1]
-    val.eval *args
+    val, args = receiver[0], receiver[1..-1]
+    if val
+      val.eval.eval *args
+    else
+      env[:nil]
+    end
   end
   
   def bind macro

@@ -1,0 +1,23 @@
+define when
+    macro want *wants &block
+        if want
+            -> real
+                if  real == want
+                    eval &block
+                         true
+                    eval
+                        define $it $ when *wants &block
+                        $it real
+            -> real $ nil
+
+define case
+    macro target #first_case &else_cases
+        if #first_case
+            if
+                eval
+                    define $it $ eval #first_case
+                    define $it $ $it target
+                    eval $it
+                eval $it
+                case target &else_cases
+            nil
