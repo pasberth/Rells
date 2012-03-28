@@ -11,6 +11,7 @@ module Bells::Runtime::Global::SyntaxMacros
       f = _.dynamic_context.create_a Macro::Func, _.dynamic_context do |_, *args|
         e = _.create_a Macro::Eval, _
         e.env[:self] = _.static_context
+        # e.env[:here] = e
         params.each { |a| e.env[a.receiver] = args.shift }
         e.eval *stats
       end

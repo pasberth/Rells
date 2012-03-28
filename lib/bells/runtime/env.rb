@@ -17,7 +17,6 @@ class Bells::Runtime::Env
     val = clone
     val.macro = macro
     val
-    self
   end
   
   def find key
