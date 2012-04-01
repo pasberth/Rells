@@ -76,7 +76,6 @@ Base.add_parser :comment, CommentParser
 class OneLineComment < Base
 
   def parse
-    #many(' ').call
     mark = none_of(" \n").call
     string(mark * 3).call
     many(mark).call
@@ -89,8 +88,6 @@ Base.add_parser :one_line_comment, OneLineComment
 class MultiLineComment < Base
 
   def parse
-    #if indent then string("\n") else self.indent = 0 end
-    #many(' ').call
     mark = none_of(" \n").call
     string(mark * 3).call
     comment_frame = mark * 4
