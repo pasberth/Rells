@@ -7,25 +7,25 @@ describe Bells::Syntax::Lexer do
   example do
     program = StringIO.new "puts"
     lexer = described_class.new program
-    lexer.send(:symbol).should == Node::Symbol.new(:puts)
+    lexer.besym.call.should == Node::Symbol.new(:puts)
   end
 
   example do
     program = StringIO.new '"hello world"'
     lexer = described_class.new program
-    lexer.send(:string).should == Node::String.new('hello world')
+    lexer.bestr.call.should == Node::String.new('hello world')
   end
 
   example do
     program = StringIO.new 'hello_world'
     lexer = described_class.new program
-    lexer.send(:symbol).should == Node::Symbol.new(:hello_world)
+    lexer.besym.call.should == Node::Symbol.new(:hello_world)
   end
   
   example do
     program = StringIO.new '42'
     lexer = described_class.new program
-    lexer.send(:integer).should == Node::Integer.new(42)
+    lexer.beint.call.should == Node::Integer.new(42)
   end
 
   example do

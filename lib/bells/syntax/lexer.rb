@@ -1,173 +1,227 @@
 require 'bells/syntax'
-require 'pasparse'
+require 'pasparsec'
 
-class Bells::Syntax::Lexer < PasParse::Lexer
+module Bells::Syntax::ParserCombinators
+
+class Base < PasParsec::Parser::Base
   
   include Bells::Syntax
+  add_state_attr :indent
+end
+
+class StringParser < Base
   
-  state_attr_accessor :indent
+  def parse
+    Node::String.new( between('"', '"', many(one_of([%q{\"}, none_of('"')]))).call.join )
+  end
+end
   
-  def initialize input=$stdin
-    super
-    @indent = -1
+Base.add_parser :bestr, StringParser
+
+class SkipSpaces < Base
+  
+  def parse
+    try(comment).call || try(skip_line).call || try(skip_space).call and skip_spaces.call
+  end
+end
+
+Base.add_parser :skip_spaces, SkipSpaces
+
+class RequireNewLine < Base
+  
+  def parse
+    indent ? string("\n").call : (self.indent = 0; '')
+  end
+end
+
+Base.add_parser :require_new_line, RequireNewLine
+
+class SkipSpace < Base
+
+  def parse
+    indent ? many1(' ').call.join : parsing_fail
+  end
+end
+
+Base.add_parser :skip_space, SkipSpace
+
+class SkipLine < Base
+  
+  def parse
+    result = require_new_line.call + many(' ').call.join
+    try do
+      if try(one_of ['$ ', '. ', '-- ', "\n"]).call
+        refresh_states
+        true
+      else
+        false
+      end
+    end.call ?
+        result : comment.call
+  end
+end
+
+Base.add_parser :skip_line, SkipLine
+
+
+class CommentParser < Base
+  
+  def parse
+    try(multi_line_comment).call or try(one_line_comment).call or parsing_fail
+  end
+end
+
+Base.add_parser :comment, CommentParser
+
+class OneLineComment < Base
+
+  def parse
+    #many(' ').call
+    mark = none_of(" \n").call
+    string(mark * 3).call
+    many(mark).call
+    Node::Comment.new (many(' ').call + many(none_of(" \n")).call + many(none_of("\n")).call).join
+  end
+end
+
+Base.add_parser :one_line_comment, OneLineComment
+
+class MultiLineComment < Base
+
+  def parse
+    #if indent then string("\n") else self.indent = 0 end
+    #many(' ').call
+    mark = none_of(" \n").call
+    string(mark * 3).call
+    comment_frame = mark * 4
+    comment_frame << many(mark).call.join
+    many(' ').call
+    require_new_line.call
+    comment = many(none_of([comment_frame])).call.join
+    string(comment_frame).call
+    Node::Comment.new comment
+  end
+end
+
+Base.add_parser :multi_line_comment, MultiLineComment
+
+class SymbolParser < Base
+  
+  def parse
+    Node::Symbol.new( (none_of([' ', "\n", '"', '-- ', '$ ', '. ']).call + many(none_of(" \n")).call.join).intern )
+  end
+end
+
+Base.add_parser :besym, SymbolParser
+
+class IntegerParser < Base
+  
+  def parse
+    Node::Integer.new( many1(one_of("0123456789")).call.join.to_i )
+  end
+end
+
+Base.add_parser :beint, IntegerParser
+
+class MacroParser < Base
+  
+  def parse
+    dot_macro.call
+  end
+end
+
+Base.add_parser :bemacro, MacroParser
+
+class MacroBodyParser < Base
+  
+  def parse
+    a = bepri.call
+    as = many(bepri).call
+    Node::Macro.new(a, *as)
+  end
+end
+
+Base.add_parser :macro_body, MacroBodyParser
+
+class IndentMacroParser < Base
+
+  def parse
+    require_new_line.call
+    string(' ' * indent).call
+    org_indent = indent
+    new_indent = many(' ').call.length
+    self.indent = org_indent + new_indent + 1
+    result = macro_body.call
+    self.indent = org_indent
+    result
+  end
+end
+
+Base.add_parser :indent_macro, IndentMacroParser
+
+class DollarMacroParser < Base
+  
+  def parse
+    string('$ ').call
+    skip_spaces.call
+    macro_body.call
+  end
+end
+
+Base.add_parser :dollar_macro, DollarMacroParser
+
+class DotMacroParser < Base
+  
+  def parse
+    a = try(indent_macro).call || try(dollar_macro).call || parsing_fail
+    try do
+      skip_spaces.call
+      string('. ').call
+      as = many(bepri).call
+      Node::Macro.new(a, *as)
+    end.call or a
+  end
+end
+
+Base.add_parser :dot_macro, DotMacroParser
+
+class HyphenationParser < Base
+  def parse
+    string('-- ').call
+    skip_spaces.call
+    bepri.call
+  end
+end
+
+Base.add_parser :hyphenation, HyphenationParser
+
+class PrimaryParser < Base
+  def parse
+    skip_spaces.call
+    try(hyphenation).call or
+    try(bemacro).call or
+    try(beint).call or
+    try(besym).call or
+    try(bestr).call or
+    parsing_fail
+  end
+end
+
+Base.add_parser :bepri, PrimaryParser
+end
+
+class Bells::Syntax::Lexer < Bells::Syntax::ParserCombinators::Base
+  
+  def initialize input
+    super()
+    self.input = input
+    self.pos = input.pos
   end
   
   def token
-    primary
+    try(bepri).call
   end
-
-  private
-
-    def primary!
-      try do
-        comment
-        ret = macro || blank_line || integer || symbol || string || hyphenation or raise Unexpected
-        comment
-        ret
-      end or raise Unexpected
-    end
-    
-    %w[primary symbol string macro macro_args blank_line hyphenation comment one_line_comment multi_line_comment integer].each do |a|
-      class_eval(<<-CODE)
-        def #{a}
-          try { #{a}! }
-        end
-      CODE
-    end
-    
-    def comment!
-      multi_line_comment or one_line_comment or raise Unexpected
-    end
-    
-    def one_line_comment!
-      expect! "\n"
-      many "\n"
-      many ' '
-      mark = expect(/(?!\s)./)
-      3.times { expect(mark) }
-      many { expect! mark }.join
-      Node::Comment.new many(/./).join
-    end
-    
-    def multi_line_comment!
-      if @indent < 0
-        @indent = 0
-      else
-        expect! "\n"
-      end
-      many "\n"
-      many ' '
-      comment_frame  = ""
-      mark = expect(/(?!\s)./)
-      comment = ""
-      comment_frame << mark
-      3.times { comment_frame << expect(mark) }
-      comment_frame << many { expect! mark }.join
-      many ' '
-      expect "\n"
-      comment = many do
-        unexpect! comment_frame and expect!(/./m)
-      end.join
-      expect comment_frame
-      Node::Comment.new comment
-    end
-    
-    def hyphenation!
-      expect "\n"
-      many ' '
-      expect '--'
-      many ' '
-      primary!
-    end
-    
-    def integer!
-      Node::Integer.new many1(/\d/).join.to_i
-    end
-    
-    def symbol!
-      # reserved words
-      unexpect '-- '
-      unexpect '$ '
-      s = many1(/[\w\&\#\+\?\$\/\=\%\-\>\<\*]/)
-      Node::Symbol.new s.join.intern
-    end
-    
-    def string!
-      raise Unexpected if touch!('--')
-      s = between('"', '"') { many(/(?!")./) }
-      Node::String.new s.join
-    end
-    
-    def macro!
-      try {
-        many {
-          try {
-            expect "\n"
-            many ' '
-          }
-        }
-        expect "$"
-        many1 ' '
-        a = primary!
-        as = macro_args!
-        try {
-          many {
-            try {
-              expect "\n"
-              many ' '
-            }
-          }
-          comment
-          expect '.'
-          as2 = macro_args!
-          Node::Macro.new Node::Macro.new(a, *as), *as2
-        } or (
-          Node::Macro.new a, *as
-        )
-      } or try {
-        if @indent < 0
-          @indent = 0
-        else
-          expect "\n"
-        end
-        origin_indent = @indent
-        expect ' ' * @indent
-        new_indent = many ' '
-        @indent += new_indent.length + 1
-        unexpect '--'
-        a = primary!
-        as = macro_args!
-        try {
-          many {
-            try {
-              expect "\n"
-              many ' '
-            }
-          }
-          comment
-          expect '.'
-          as2 = macro_args!
-          @indent = origin_indent
-          Node::Macro.new Node::Macro.new(a, *as), *as2
-        } or (
-          @indent = origin_indent
-          Node::Macro.new a, *as
-        )
-      } or raise Unexpected
-     end
-    
-    def macro_args!
-      many do
-        many ' '
-        primary
-      end
-    end
-    
-    def blank_line!
-      macro or try {
-        expect "\n"
-        many ' '
-        blank_line!
-      } or raise Unexpected
-    end
+  
+  def parse
+  end
 end

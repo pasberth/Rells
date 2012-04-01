@@ -66,14 +66,14 @@ class Bells::Syntax::Parser
     end
     
     toplevel = Node::Macro.new(
-      Node::Symbol.new(:eval), 
+      Node::Symbol.new(:eval),
       *([].tap do |a|
         while t = lexer.token
           a << t
         end
-        if (rest = input.read) !~ /\A[ \n]*\z/
-          raise Bells::Syntax::SyntaxError, "Unexpected #{rest[0].inspect} in #{rest.each_line.first.inspect}."
-        end
+        #if (rest = input.read) !~ /\A[ \n]*\z/
+        #  raise Bells::Syntax::SyntaxError, "Unexpected #{rest[0].inspect} in #{rest.each_line.first.inspect}."
+        #end
       end))
     toplevel
   end
